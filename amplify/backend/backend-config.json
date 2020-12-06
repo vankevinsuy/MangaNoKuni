@@ -1,0 +1,10 @@
+{
+  "auth": {
+    "manganokuniaws386f3ea3": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  }
+}

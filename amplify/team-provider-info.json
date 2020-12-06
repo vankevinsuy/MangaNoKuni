@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-manganokuniaws-dev-182354-authRole",
+      "UnauthRoleArn": "arn:aws:iam::899225450445:role/amplify-manganokuniaws-dev-182354-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::899225450445:role/amplify-manganokuniaws-dev-182354-authRole",
+      "Region": "eu-west-2",
+      "DeploymentBucketName": "amplify-manganokuniaws-dev-182354-deployment",
+      "UnauthRoleName": "amplify-manganokuniaws-dev-182354-unauthRole",
+      "StackName": "amplify-manganokuniaws-dev-182354",
+      "StackId": "arn:aws:cloudformation:eu-west-2:899225450445:stack/amplify-manganokuniaws-dev-182354/80032790-2ce7-11eb-af62-0a321082c1e4",
+      "AmplifyAppId": "d2atk8gstz0kqv"
+    },
+    "categories": {
+      "auth": {
+        "manganokuniaws386f3ea3": {}
+      }
+    }
+  }
+}
