@@ -34,7 +34,7 @@ export default function Favoris(props) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar 
-        backgroundColor = {themeDATA["background-basic-color-1"]}
+        backgroundColor = {(themeContext.theme === "dark") ? themeDATA['background-basic-color-1'] : app_common_style.splash_screen_color}
         barStyle = {(themeContext.theme === "dark") ?  'light-content' :  'dark-content'}
       />
 

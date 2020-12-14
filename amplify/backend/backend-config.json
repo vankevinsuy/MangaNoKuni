@@ -1,6 +1,24 @@
 {
+  "api": {
+    "manganokuni": {
+      "service": "AppSync",
+      "providerPlugin": "awscloudformation",
+      "output": {
+        "authConfig": {
+          "defaultAuthentication": {
+            "authenticationType": "API_KEY",
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 365,
+              "description": "manganokuni"
+            }
+          },
+          "additionalAuthenticationProviders": []
+        }
+      }
+    }
+  },
   "auth": {
-    "manganokuniaws386f3ea3": {
+    "manganokuni57f9f35b": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
