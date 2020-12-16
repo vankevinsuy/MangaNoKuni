@@ -23,10 +23,10 @@ export default function SignUp({ navigation }) {
   async function signUp() {
     try {
       await Auth.signUp({ username, password, attributes: { email } });
-      console.log('<img draggable="false" class="emoji" alt="✅" src="https://s.w.org/images/core/emoji/11/svg/2705.svg"> Sign-up Confirmed');
+      console.log('--------------------------------------------------Sign-up Confirmed');
       navigation.navigate('ConfirmSignUp');
     } catch (error) {
-      console.log('<img draggable="false" class="emoji" alt="❌" src="https://s.w.org/images/core/emoji/11/svg/274c.svg"> Error signing up...', error);
+      console.log('--------------------------------------------------Error signing up...', error);
     }
   }
 

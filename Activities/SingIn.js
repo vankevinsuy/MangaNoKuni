@@ -36,10 +36,6 @@ export default function SignIn({ navigation, updateAuthState}) {
     }
   }
 
-  console.log("-------------------SIGNIN------------------------");
-  console.log(themeContext.theme)
-
-
 
 
   const styles = StyleSheet.create({

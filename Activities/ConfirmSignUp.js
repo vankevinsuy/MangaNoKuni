@@ -18,11 +18,11 @@ export default function ConfirmSignUp({ navigation }) {
   async function confirmSignUp() {
     try {
       await Auth.confirmSignUp(username, authCode);
-      console.log('<img draggable="false" class="emoji" alt="✅" src="https://s.w.org/images/core/emoji/11/svg/2705.svg"> Code confirmed');
+      console.log('---------------------------------------------Code confirmed');
       navigation.navigate('SignIn');
     } catch (error) {
       console.log(
-        '<img draggable="false" class="emoji" alt="❌" src="https://s.w.org/images/core/emoji/11/svg/274c.svg"> Verification code does not match. Please enter a valid verification code.',
+        '--------------------------------------------- Verification code does not match. Please enter a valid verification code.',
         error.code
       );
     }

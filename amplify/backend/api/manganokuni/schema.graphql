@@ -1,0 +1,22 @@
+type Manga @model {
+  id: ID!
+  mal_id: Int!
+  url: String!
+  from: String!
+  title: String!
+  title_japanese: String!
+  synopsys: String!
+  image_url: String!
+  score:String!
+  genre:[String!]
+  authors:[String!]
+}
+
+type Chapitre @model {
+  id: ID!
+  mal_id: Int!
+  title: String!
+  num_chapitre: Int!
+  url: String!
+  images_html: String!
+}
