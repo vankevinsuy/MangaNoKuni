@@ -15,6 +15,9 @@ export const createManga = /* GraphQL */ `
       title_japanese
       synopsys
       image_url
+      score
+      genre
+      authors
       createdAt
       updatedAt
     }
@@ -34,6 +37,9 @@ export const updateManga = /* GraphQL */ `
       title_japanese
       synopsys
       image_url
+      score
+      genre
+      authors
       createdAt
       updatedAt
     }
@@ -53,6 +59,9 @@ export const deleteManga = /* GraphQL */ `
       title_japanese
       synopsys
       image_url
+      score
+      genre
+      authors
       createdAt
       updatedAt
     }

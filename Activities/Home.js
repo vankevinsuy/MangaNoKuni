@@ -1,7 +1,6 @@
 import React, { useState, useEffect  } from 'react';
-import { StyleSheet,  StatusBar, Image} from 'react-native';
-import { Layout as View, Text, useTheme , Spinner } from '@ui-kitten/components';
-import { Card, ListItem, Button, Icon } from 'react-native-elements'
+import { StyleSheet,  StatusBar, ScrollView , Dimensions, FlatList } from 'react-native';
+import { Layout as View,  useTheme , Spinner } from '@ui-kitten/components';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -15,6 +14,9 @@ import HeaderSearch from '../components/Header_search';
 // graphQL
 import {API, graphqlOperation} from 'aws-amplify'
 import {listMangas} from '../graphql/queries'
+
+//component
+import CardManga from '../components/CardManga'
 
 
 
@@ -50,22 +52,22 @@ export default function Home(props) {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      //alignItems: 'center',
+      //alignItems: 'flex-start',
       backgroundColor: themeDATA['background-basic-color-1']
     }, 
 
      data : {
-       flex : 1,
-       backgroundColor: themeDATA['background-basic-color-1']
+      flex : 1,
+      // flexDirection: 'row',
+      //flexWrap : 'wrap',
+      //justifyContent : 'space-between',
+      //backgroundColor: themeDATA['background-basic-color-1'],
      },
-
-     tinyLogo: {
-      width: 300,
-      height: 400,
-    },
-
   });
 
+  const renderItem = ({ item }) => (
+    <CardManga mangaData={item} />
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -79,40 +81,15 @@ export default function Home(props) {
       { 
         Dataloading ?
          (<Spinner size='giant'/>) : 
-        (<View style={styles.data}>
-          {
-            StateMangas.map((manga, index) => (
-              <View key={index}>
-
-                  <Card>
-                    <Card.Title>{manga.title}</Card.Title>
-                    <Card.Title>{manga.title_japanese}</Card.Title>
-                    <Card.Divider/>
-                    <Card.Image source={{uri: manga.image_url}}  style={styles.tinyLogo}/>
-                    <Text style={{marginBottom: 10}}>
-                        The idea with React Native Elements is more about component structure than actual design.
-                    </Text>
-                    <Button
-                      icon={<Icon name='code' color='#ffffff' />}
-                      buttonStyle={{borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0}}
-                      title='VIEW NOW' />
-                  </Card>
-
-              </View>
-            ))
-          }
-        </View>)
+        (
+          <FlatList
+            style = {styles.data}
+            data={StateMangas}
+            renderItem={renderItem}
+            keyExtractor={manga => manga.id}
+          />
+        )
       }
-
-
-
-      
-
-
-      
-      <Text>{StateMangas.length}</Text>
-
-      <Text>Home</Text>
 
     </SafeAreaView>
   );

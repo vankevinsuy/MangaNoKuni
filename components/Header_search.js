@@ -17,22 +17,21 @@ const HeaderSearch = (props) => {
 
     const styles = StyleSheet.create({
         container: {
-          flex: 0.15,
+          flex: 0.1,
           alignItems: 'center', 
           backgroundColor :  (themeContext.theme === "dark") ? themeDATA["background-basic-color-1"] : app_common_style.splash_screen_color,
           flexDirection: "row",
         }, 
         drawerButton : {
-            width: 40, 
-            height: 40,
-            marginLeft: 10,
+            flex: 0.5,
+            width : 50,
+            resizeMode : 'contain'
         }, 
 
         SearchBar_global_container : {
             flex : 1,
             flexDirection: "row",
             alignItems: 'center', 
-            marginLeft : 20,
             marginRight : 5,
             backgroundColor :  (themeContext.theme === "dark") ? themeDATA["background-basic-color-1"] : app_common_style.splash_screen_color,
         },
@@ -46,10 +45,8 @@ const HeaderSearch = (props) => {
 
         SearchBar_clear_icon :{
             color : "white",
-            marginHorizontal : 10
+            marginHorizontal : 5
         }
-
-
     });
 
 

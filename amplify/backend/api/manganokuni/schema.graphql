@@ -7,6 +7,9 @@ type Manga @model {
   title_japanese: String!
   synopsys: String!
   image_url: String!
+  score:String!
+  genre:[String!]
+  authors:[String!]
 }
 
 type Chapitre @model {
