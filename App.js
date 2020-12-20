@@ -17,6 +17,7 @@ import Home from './Activities/Home';
 import Favoris from './Activities/Favoris';
 import Settings from './Activities/Settings';
 import User from './Activities/User';
+import MangaInfo from './Activities/MangaInfo'
 
 import * as app_common_style from './assets/themes/common_style';
 import * as eva from '@eva-design/eva';
@@ -32,6 +33,7 @@ import config from './aws-exports';
 Amplify.configure(config);
 
 const AuthenticationStack = createStackNavigator();
+const HomeStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 async function beforeLaunch () {
@@ -91,7 +93,7 @@ const AppNavigator = props => {
     drawerContent={(props) => <CustomSidebarMenu {...props} />}>
 
 
-      <Drawer.Screen name="Home" component={Home} />
+      <Drawer.Screen name="Home" component={HomeNavigation} />
       <Drawer.Screen name="Profile" component={User} />
       <Drawer.Screen name="Favoris" component={Favoris} />
       <Drawer.Screen name="Settings" >
@@ -111,7 +113,14 @@ const Initializing = () => {
   );
 };
 
-
+function HomeNavigation() {
+  return (
+    <HomeStack.Navigator screenOptions={{headerShown: false}}>
+      <HomeStack.Screen name="Home" component={Home} />
+      <HomeStack.Screen name="MangaInfo" component={MangaInfo} />
+    </HomeStack.Navigator>
+  );
+}
 
 
 //resetDatas();

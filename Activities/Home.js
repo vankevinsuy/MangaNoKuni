@@ -4,6 +4,7 @@ import { Layout as View,  useTheme , Spinner } from '@ui-kitten/components';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+
 // themes import 
 import * as app_common_style from '../assets/themes/common_style';
 import { ThemeContext } from '../assets/themes/theme-context';
@@ -11,22 +12,24 @@ import { ThemeContext } from '../assets/themes/theme-context';
 // components import 
 import HeaderSearch from '../components/Header_search';
 
+
 // graphQL
-import {API, graphqlOperation} from 'aws-amplify'
-import {listMangas} from '../graphql/queries'
+import {API, graphqlOperation} from 'aws-amplify';
+import {listMangas} from '../graphql/queries';
 
 //component
-import CardManga from '../components/CardManga'
+import CardManga from '../components/CardManga';
 
 
 
 
-export default function Home(props) {
+export default function Home({ navigation }) {
 
   const themeContext = React.useContext(ThemeContext);
   const themeDATA = useTheme();
   const [StateMangas, setStateMangas] = useState([])
   const [Dataloading, setDataloading] = useState(true);
+
 
   useEffect(() => {
     setDataloading(true)
@@ -52,21 +55,16 @@ export default function Home(props) {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      //alignItems: 'flex-start',
       backgroundColor: themeDATA['background-basic-color-1']
     }, 
 
      data : {
       flex : 1,
-      // flexDirection: 'row',
-      //flexWrap : 'wrap',
-      //justifyContent : 'space-between',
-      //backgroundColor: themeDATA['background-basic-color-1'],
      },
   });
 
   const renderItem = ({ item }) => (
-    <CardManga mangaData={item} />
+    <CardManga mangaData={item} navigation={navigation}/>
   );
 
   return (
