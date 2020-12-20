@@ -18,15 +18,15 @@ const Header = (props) => {
 
     const styles = StyleSheet.create({
         container: {
-          flex: 0.15,
+          flex: 0.1,
           alignItems: 'center', 
           backgroundColor : (themeContext.theme === "dark") ? themeDATA["background-basic-color-1"] : app_common_style.splash_screen_color,
           flexDirection: "row",
         }, 
         drawerButton : {
-            width: 40, 
-            height: 40,
-            marginLeft: 10
+            flex: 0.5,
+            width : 50,
+            resizeMode : 'contain'
         },
     });
 

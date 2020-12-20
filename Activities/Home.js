@@ -1,5 +1,5 @@
 import React, { useState, useEffect  } from 'react';
-import { StyleSheet,  StatusBar, ScrollView , Dimensions, FlatList } from 'react-native';
+import { StyleSheet,  StatusBar, FlatList } from 'react-native';
 import { Layout as View,  useTheme , Spinner } from '@ui-kitten/components';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -37,7 +37,7 @@ export default function Home({ navigation }) {
   }, [])
 
   function toogleDrawer() {
-    props.navigation.openDrawer()
+    navigation.openDrawer()
   }
 
   async function fetchMangas() {
