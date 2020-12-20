@@ -78,7 +78,11 @@ export default function Home({ navigation }) {
 
       { 
         Dataloading ?
-         (<Spinner size='giant'/>) : 
+         (
+          <View style = {{flex : 1, alignItems : 'center' , justifyContent : 'center'}}>
+            <Spinner size='giant'/>
+          </View>
+         ) : 
         (
           <FlatList
             style = {styles.data}

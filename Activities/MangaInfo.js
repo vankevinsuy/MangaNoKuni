@@ -1,7 +1,10 @@
-import React ,{useState} from 'react';
-import { StyleSheet, Image,  Dimensions , Button, ScrollView} from 'react-native';
+import React ,{useState, useEffect} from 'react';
+import { StyleSheet, Image, Button, ScrollView, StatusBar} from 'react-native';
 import Slider from '@react-native-community/slider';
 import { Layout as View, Text, useTheme , Spinner } from '@ui-kitten/components';
+
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 // themes import 
 import * as app_common_style from '../assets/themes/common_style';
@@ -9,29 +12,50 @@ import { ThemeContext } from '../assets/themes/theme-context';
 
 // graphQL
 import {API, graphqlOperation} from 'aws-amplify';
-import {getManga} from '../graphql/queries';
+import {getManga, listChapitres} from '../graphql/queries';
 
 
 
 export default function MangaInfo({route, navigation}) {
 
-    const {mangaData} = route.params;
-    
-    // Query using a parameter
-    async function fetchMangas() {
-        const oneTodo = await API.graphql(graphqlOperation(getManga, { id: mangaData.id} ));
-        console.log(oneTodo)
-    }
-
-    fetchMangas()
+    const {mangaID} = route.params;
 
     const [value_chapter, setValue_chapter] = useState(400)
+    const [mangaData, setMangaData] = useState()    
+    const [loadingData, setLoadingData] = useState(true)
+
+    useEffect(() => {
+        setLoadingData(true)
+        fetchManga()
+      }, [])
+
+
+    // Query using a parameter
+    async function fetchManga() {
+        const manga = await API.graphql(graphqlOperation(getManga, { id: mangaID} ));
+        setMangaData(manga.data.getManga)
+        setLoadingData(false)
+
+
+        let filter = {
+            mal_id: 116778
+        };
+
+        const chap = await API.graphql({ query: listChapitres, variables: { filter: filter}});
+        console.log(chap.data)
+    }
+
 
     const themeContext = React.useContext(ThemeContext);
     const themeDATA = useTheme();
 
     const styles = StyleSheet.create({
     container: {
+        flex : 1,
+        backgroundColor: themeDATA['background-basic-color-1'],
+    },
+    
+    container_loading: {
         flex : 1,
         backgroundColor: themeDATA['background-basic-color-1'],
     },
@@ -74,7 +98,21 @@ export default function MangaInfo({route, navigation}) {
     });
 
     return (
-    <View style={styles.container}> 
+        <SafeAreaView style = {{flex : 1}}>
+
+        <StatusBar
+        backgroundColor={(themeContext.theme === "dark") ? themeDATA['background-basic-color-1'] : app_common_style.splash_screen_color}
+        barStyle = {(themeContext.theme === "dark") ?  'light-content' :  'dark-content'}
+        />
+
+{
+    loadingData ? 
+    (   <View style = {{flex : 1, alignItems : 'center' , justifyContent : 'center'}}>
+            <Spinner size='giant'/>
+        </View>
+    ):
+    (
+        <View style={styles.container}> 
 
         <Image
             style={styles.header_image}
@@ -128,7 +166,12 @@ export default function MangaInfo({route, navigation}) {
 
         </View>
 
-    </View>
+        </View>
+    )
+}
+
+        </SafeAreaView>
+
     );
 
 }

@@ -57,7 +57,7 @@ export default function CardManga({ navigation , mangaData}) {
   });
 
   const click = () =>{
-      navigation.navigate("MangaInfo", params = {mangaData: mangaData} )
+      navigation.navigate("MangaInfo", params = {mangaID: mangaData.id} )
   }
 
 
