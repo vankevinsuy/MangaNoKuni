@@ -38,11 +38,17 @@ export default function MangaInfo({route, navigation}) {
 
 
         let filter = {
-            mal_id: 116778
+            mal_id: 
+            {
+                eq : 116778
+            },
+            num_chapitre : {
+                eq : 64
+            }
         };
 
-        const chap = await API.graphql({ query: listChapitres, variables: { filter: filter}});
-        console.log(chap.data)
+        const chap = await API.graphql({ query: listChapitres, variables: { filter: filter} });
+        console.log(chap.data.listChapitres.items[0])
     }
 
 
