@@ -1,6 +1,5 @@
 import React ,{useState, useEffect} from 'react';
-import { StyleSheet, Image, Button, ScrollView, StatusBar} from 'react-native';
-import Slider from '@react-native-community/slider';
+import { StyleSheet, Image, ScrollView, StatusBar, TouchableOpacity} from 'react-native';
 import { Layout as View, Text, useTheme , Spinner } from '@ui-kitten/components';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,7 +11,7 @@ import { ThemeContext } from '../assets/themes/theme-context';
 
 // graphQL
 import {API, graphqlOperation} from 'aws-amplify';
-import {getManga, listChapitres} from '../graphql/queries';
+import {getManga, chapitreByMalId} from '../graphql/queries';
 
 
 
@@ -20,8 +19,11 @@ export default function MangaInfo({route, navigation}) {
 
     const {mangaID} = route.params;
 
-    const [value_chapter, setValue_chapter] = useState(400)
-    const [mangaData, setMangaData] = useState()    
+    const [user_chapter, setValue_chapter] = useState(10)
+    const [mangaData, setMangaData] = useState({})    
+    const [chapters_list, setChapters_list] = useState([])
+
+
     const [loadingData, setLoadingData] = useState(true)
 
     useEffect(() => {
@@ -30,25 +32,16 @@ export default function MangaInfo({route, navigation}) {
       }, [])
 
 
-    // Query using a parameter
     async function fetchManga() {
         const manga = await API.graphql(graphqlOperation(getManga, { id: mangaID} ));
         setMangaData(manga.data.getManga)
+
+        const chap = await API.graphql(graphqlOperation(chapitreByMalId, { mal_id: manga.data.getManga.mal_id , limit : 10000} ));
+        var chapdata = chap.data.ChapitreByMalID.items
+        setChapters_list(chapdata)
+
         setLoadingData(false)
 
-
-        let filter = {
-            mal_id: 
-            {
-                eq : 116778
-            },
-            num_chapitre : {
-                eq : 64
-            }
-        };
-
-        const chap = await API.graphql({ query: listChapitres, variables: { filter: filter} });
-        console.log(chap.data.listChapitres.items[0])
     }
 
 
@@ -66,8 +59,13 @@ export default function MangaInfo({route, navigation}) {
         backgroundColor: themeDATA['background-basic-color-1'],
     },
 
-    header_image : {
+    container_header: {
         flex : 0.7,
+        backgroundColor: themeDATA['background-basic-color-1'],
+    },
+
+    header_image : {
+        flex : 1,
         resizeMode : 'contain',
         marginVertical : 20,
     },
@@ -75,11 +73,12 @@ export default function MangaInfo({route, navigation}) {
     details : {
         flex : 1,
         marginHorizontal : 20,
+        marginBottom : 10
     },
 
     select_chapter : {
         flex : 0.5,
-        marginHorizontal : 20
+        marginHorizontal : 20,
     },
 
     slider : {
@@ -102,6 +101,8 @@ export default function MangaInfo({route, navigation}) {
     },
 
     });
+    
+
 
     return (
         <SafeAreaView style = {{flex : 1}}>
@@ -120,57 +121,58 @@ export default function MangaInfo({route, navigation}) {
     (
         <View style={styles.container}> 
 
-        <Image
-            style={styles.header_image}
-            source={{
-                uri: mangaData.image_url,
-            }}
-        />
+            <View style={styles.container_header}>
+                <Image
+                    style={styles.header_image}
+                    source={{
+                        uri: mangaData.image_url,
+                    }}
+                />
+            </View>
 
-        <View style={styles.details}>
-            <Text style = {styles.title_japanese}>{mangaData.title_japanese}</Text>
-            <Text style = {styles.title}>{mangaData.title}</Text>
 
-            <Text style = {{fontWeight: 'bold'}}>Author(s) :  
-                <Text> {mangaData.authors}</Text>
-            </Text>
 
-            <Text style = {{fontWeight: 'bold'}}>Genres :  
-                <Text> {mangaData.genre.join(" - ")}</Text>
-            </Text>
+            <ScrollView style = {{flex : 1}}>
 
-            <Text style = {{fontWeight: 'bold'}}>MyAnimeList Score :  
-                <Text> {mangaData.score}</Text>
-            </Text>
+                <View style={styles.details}>
+                    <Text style = {styles.title_japanese}>{mangaData.title_japanese}</Text>
+                    <Text style = {styles.title}>{mangaData.title}</Text>
 
-            <Text style = {{fontWeight: 'bold', fontSize : 20, marginTop : 20}}>Synopsys </Text>
-            <ScrollView>
-                <Text style = {{textAlign : 'justify'}} >{mangaData.synopsys}</Text>
-            </ScrollView>
-        </View>
+                    <Text style = {{fontWeight: 'bold'}}>Author(s) :  
+                        <Text> {mangaData.authors}</Text>
+                    </Text>
 
-        <View style={styles.select_chapter}>
+                    <Text style = {{fontWeight: 'bold'}}>Genres :  
+                        <Text> {mangaData.genre.join(" - ")}</Text>
+                    </Text>
 
-            <Slider
-                style={styles.slider}
-                minimumValue={1}
-                maximumValue={1000}
-                step = {1}
-                minimumTrackTintColor="red"
-                maximumTrackTintColor="blue"
-                thumbTintColor = "tomato"
-                value = {value_chapter}
-                onValueChange = {(value) => {setValue_chapter(value)}}
-            />
+                    <Text style = {{fontWeight: 'bold'}}>MyAnimeList Score :  
+                        <Text> {mangaData.score}</Text>
+                    </Text>
+
+                    <Text style = {{fontWeight: 'bold', fontSize : 20, marginTop : 20, marginBottom : 10}}>Synopsys </Text>
+                    <Text style = {{textAlign : 'justify' , marginTop : 20, marginBottom : 5}} numberOfLines={5} >{mangaData.synopsys}</Text>
+                </View>
+
+                <View style={styles.select_chapter}>
+
+                    {
+                        chapters_list.map((chapitre, index) => 
+                        
+                        <TouchableOpacity key = {index} style = {{margin : 10}} onPress = {() => { navigation.navigate("Reading", params = {chapitreData: chapitre} ) }  }>
+                            <Text>{chapitre.num_chapitre}</Text>
+                            <Text>{chapitre.title}</Text>
+                        </TouchableOpacity>
+
+                        )
+                    }
+
+                </View>
+                
+            </ScrollView>             
             
-            <Button
-                style = {styles.button_read}
-                //  onPress={onPressLearnMore}
-                title= {"Read chapter " + value_chapter}
-                color="tomato"
-            />
 
-        </View>
+
 
         </View>
     )

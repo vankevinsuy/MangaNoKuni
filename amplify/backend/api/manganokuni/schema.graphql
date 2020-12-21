@@ -1,4 +1,6 @@
-type Manga @model {
+type Manga @model 
+@key(name: "MangaByMalID", fields: ["mal_id", "title"], queryField: "MangaByMalID")
+{
   id: ID!
   mal_id: Int!
   url: String!
@@ -12,7 +14,9 @@ type Manga @model {
   authors:[String!]
 }
 
-type Chapitre @model {
+type Chapitre @model 
+@key(name: "ChapitreByMalID", fields: ["mal_id", "num_chapitre"], queryField: "ChapitreByMalID")
+{
   id: ID!
   mal_id: Int!
   title: String!

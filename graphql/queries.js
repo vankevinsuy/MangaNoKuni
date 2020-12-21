@@ -81,3 +81,70 @@ export const listChapitres = /* GraphQL */ `
     }
   }
 `;
+export const mangaByMalId = /* GraphQL */ `
+  query MangaByMalId(
+    $mal_id: Int
+    $title: ModelStringKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelMangaFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    MangaByMalID(
+      mal_id: $mal_id
+      title: $title
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        mal_id
+        url
+        from
+        title
+        title_japanese
+        synopsys
+        image_url
+        score
+        genre
+        authors
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const chapitreByMalId = /* GraphQL */ `
+  query ChapitreByMalId(
+    $mal_id: Int
+    $num_chapitre: ModelIntKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelChapitreFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    ChapitreByMalID(
+      mal_id: $mal_id
+      num_chapitre: $num_chapitre
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        mal_id
+        title
+        num_chapitre
+        url
+        images_html
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;

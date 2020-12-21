@@ -18,6 +18,7 @@ import Favoris from './Activities/Favoris';
 import Settings from './Activities/Settings';
 import User from './Activities/User';
 import MangaInfo from './Activities/MangaInfo'
+import Reading from './Activities/Reading'
 
 import * as app_common_style from './assets/themes/common_style';
 import * as eva from '@eva-design/eva';
@@ -118,6 +119,7 @@ function HomeNavigation() {
     <HomeStack.Navigator screenOptions={{headerShown: false}}>
       <HomeStack.Screen name="Home" component={Home} />
       <HomeStack.Screen name="MangaInfo" component={MangaInfo} />
+      <HomeStack.Screen name="Reading" component={Reading} />
     </HomeStack.Navigator>
   );
 }
