@@ -13,7 +13,7 @@ import { ThemeContext } from '../assets/themes/theme-context';
 // import components
 import Header from '../components/Header';
 
-export default function Favoris(props) {
+export default function Mylibrary(props) {
 
   const themeContext = React.useContext(ThemeContext);
   const themeDATA = useTheme();

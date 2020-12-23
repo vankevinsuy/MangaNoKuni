@@ -13,7 +13,7 @@ import SignUp from './Activities/SignUp';
 import ConfirmSignUp from './Activities/ConfirmSignUp';
 
 import Home from './Activities/Home';
-import Favoris from './Activities/Favoris';
+import Mylibrary from './Activities/Mylibrary';
 import Settings from './Activities/Settings';
 import User from './Activities/User';
 import MangaInfo from './Activities/MangaInfo'
@@ -91,7 +91,7 @@ const AppNavigator = props => {
 
       <Drawer.Screen name="Home" component={HomeNavigation} />
       <Drawer.Screen name="Profile" component={User} />
-      <Drawer.Screen name="Favoris" component={Favoris} />
+      <Drawer.Screen name="My library" component={Mylibrary} />
       <Drawer.Screen name="Settings" >
       {screenProps => (
           <Settings {...screenProps} updateAuthState={props.updateAuthState} />
