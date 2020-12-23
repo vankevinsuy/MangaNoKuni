@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import * as SplashScreen from 'expo-splash-screen';
-import { init_user_app_config, isFirstUse,resetDatas } from './CustomFunctions/CommonVariable';
+import { init_user_app_config, isFirstUse, changeTheme } from './CustomFunctions/CommonVariable';
 
 import { ActivityIndicator} from 'react-native';
 import Amplify, { Auth } from 'aws-amplify';
@@ -28,6 +27,9 @@ import { default as Mytheme } from './assets/themes/theme.json'; // <-- Import a
 
 import CustomSidebarMenu from './components/CustomSidebarMenu';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 //import { androidOnBackPressed } from '../CustomFunctions/Android';
 
 import config from './aws-exports';
@@ -39,9 +41,6 @@ const Drawer = createDrawerNavigator();
 
 async function beforeLaunch () {
   try {
-    // display splashscreen
-    await SplashScreen.preventAutoHideAsync();
-
     //  it is the first we use the app, so we initialise some global variable stored in CommonVariable.js
     isFirstUse().then((val) => { 
       if(val !== "1"){
@@ -52,10 +51,6 @@ async function beforeLaunch () {
         console.log("welcome back");
       }
     });
-
-    
-    // close splashscreen
-    await SplashScreen.hideAsync();
   } 
   
   catch (e) {
@@ -125,20 +120,20 @@ function HomeNavigation() {
 }
 
 
-//resetDatas();
 
 const App  = () => {  
-  //beforeLaunch();
+  // beforeLaunch();
 
-  //androidOnBackPressed();
+
   const [isUserLoggedIn, setUserLoggedIn] = useState('initializing');
   const [theme, setTheme] = React.useState('light');
 
+  AsyncStorage.getItem('theme').then((val) => {setTheme(val)});
 
   const toggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(nextTheme);
-    console.log("theme = " + theme);
+    changeTheme(nextTheme)
   };
   
   useEffect(() => {

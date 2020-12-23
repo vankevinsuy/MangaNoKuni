@@ -13,8 +13,7 @@ async function isFirstUse() {
 async function init_user_app_config() {
     try {
         await AsyncStorage.setItem('first_use', "1");
-        await AsyncStorage.setItem('theme', "light");
-        await AsyncStorage.setItem('username', "none");
+        await AsyncStorage.setItem('theme', 'light');
       } catch (e) {
         console.error(e);
       }
@@ -33,10 +32,7 @@ async function changeTheme(val) {
 
 async function getTheme() {
     try {
-        const darked = await AsyncStorage.getItem('theme');
-        if(darked !== null) {
-            return darked;
-        }
+        await AsyncStorage.getItem('theme').then((val) => {return val});
       } catch(e) {
         console.error(e);
       }

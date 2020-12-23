@@ -38,7 +38,7 @@ export default function MangaInfo({route, navigation}) {
 
         const chap = await API.graphql(graphqlOperation(chapitreByMalId, { mal_id: manga.data.getManga.mal_id , limit : 10000} ));
         var chapdata = chap.data.ChapitreByMalID.items
-        setChapters_list(chapdata)
+        setChapters_list(chapdata.reverse())
 
         setLoadingData(false)
 
@@ -160,7 +160,7 @@ export default function MangaInfo({route, navigation}) {
                         chapters_list.map((chapitre, index) => 
                         
                         <TouchableOpacity key = {index} style = {{margin : 10}} onPress = {() => { navigation.navigate("Reading", params = {chapitreData: chapitre} ) }  }>
-                            <Text>{chapitre.num_chapitre}</Text>
+                            <Text style = {{fontWeight: 'bold', fontSize : 20}}>{chapitre.num_chapitre}</Text>
                             <Text>{chapitre.title}</Text>
                         </TouchableOpacity>
 

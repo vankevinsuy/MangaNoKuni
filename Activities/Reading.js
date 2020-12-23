@@ -42,6 +42,10 @@ export default function Reading({route, navigation}) {
         justifyContent : 'center'
     },
 
+    WebView : {
+        backgroundColor: themeDATA['background-basic-color-1'],
+    }
+
     });
 
     const [loadingStyle, setLoadingStyle] = useState(styles.container_loading);
@@ -63,7 +67,7 @@ export default function Reading({route, navigation}) {
             </View>
 
             <WebView
-                style={webViewStyle}
+                style={[webViewStyle, styles.WebView]}
                 source={webViewSource}
 
                 onLoad = {() => {
