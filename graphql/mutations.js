@@ -127,6 +127,7 @@ export const createUser = /* GraphQL */ `
       id
       clienID
       imgProfil
+      pseudo
       createdAt
       updatedAt
     }
@@ -141,6 +142,7 @@ export const updateUser = /* GraphQL */ `
       id
       clienID
       imgProfil
+      pseudo
       createdAt
       updatedAt
     }
@@ -155,6 +157,7 @@ export const deleteUser = /* GraphQL */ `
       id
       clienID
       imgProfil
+      pseudo
       createdAt
       updatedAt
     }

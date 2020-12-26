@@ -20,7 +20,7 @@ type Chapitre @model
   id: ID!
   mal_id: Int!
   title: String!
-  num_chapitre: Int!
+  num_chapitre: Float!
   url: String!
   images_html: String!
 }
@@ -39,5 +39,5 @@ type Reading @model
   id: ID!
   mal_id: String!
   clienID: String!
-  currentChapter: Int!
+  currentChapter: Float!
 }

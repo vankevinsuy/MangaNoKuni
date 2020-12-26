@@ -87,6 +87,7 @@ export const getUser = /* GraphQL */ `
       id
       clienID
       imgProfil
+      pseudo
       createdAt
       updatedAt
     }
@@ -103,6 +104,7 @@ export const listUsers = /* GraphQL */ `
         id
         clienID
         imgProfil
+        pseudo
         createdAt
         updatedAt
       }
@@ -180,7 +182,7 @@ export const mangaByMalId = /* GraphQL */ `
 export const chapitreByMalId = /* GraphQL */ `
   query ChapitreByMalId(
     $mal_id: Int
-    $num_chapitre: ModelIntKeyConditionInput
+    $num_chapitre: ModelFloatKeyConditionInput
     $sortDirection: ModelSortDirection
     $filter: ModelChapitreFilterInput
     $limit: Int
