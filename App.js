@@ -30,8 +30,6 @@ import CustomSidebarMenu from './components/CustomSidebarMenu';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-//import { androidOnBackPressed } from '../CustomFunctions/Android';
-
 import config from './aws-exports';
 Amplify.configure(config);
 
@@ -70,7 +68,11 @@ const AuthenticationNavigator = props => {
 
       <AuthenticationStack.Screen name="SignUp" component={SignUp} />
 
-      <AuthenticationStack.Screen name="ConfirmSignUp" component={ConfirmSignUp}/>
+      <AuthenticationStack.Screen name="ConfirmSignUp" >
+        {screenProps => (
+          <ConfirmSignUp {...screenProps} updateAuthState={props.updateAuthState}/>
+        )}
+      </AuthenticationStack.Screen>
 
     </AuthenticationStack.Navigator>
   );

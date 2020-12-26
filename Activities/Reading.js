@@ -21,7 +21,7 @@ export default function Reading({route, navigation}) {
 
     const {chapitreData} = route.params;
 
-
+    console.log(chapitreData)
 
     const [webViewSource, setwebViewSource] = useState({ uri: chapitreData.url });
     const [webViewStyle, setwebViewStyle] = useState({display : 'none'});
@@ -76,7 +76,7 @@ export default function Reading({route, navigation}) {
 
                 onLoadEnd = {() => {
                     setLoadingStyle({display : 'none'})
-                    setwebViewSource({ html: chapitreData.images_html })
+                    //setwebViewSource({ html: chapitreData.images_html })
                     setwebViewStyle({flex : 1})
                 }}
             />

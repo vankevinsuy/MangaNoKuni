@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { SafeAreaView,  View,  StyleSheet,  Text, Modal, Button, ScrollView} from 'react-native';
 import {  DrawerContentScrollView,  DrawerItemList,  DrawerItem,} from '@react-navigation/drawer';
-import { Avatar, Accessory , Image } from 'react-native-elements';
+import { Avatar } from 'react-native-elements';
 
 import Amplify, { Auth } from 'aws-amplify';
 import config from '../aws-exports';
@@ -9,20 +9,30 @@ Amplify.configure(config);
 
 import {avatars_url} from '../assets/Avatars'
 
+// graphQL
+import {API, graphqlOperation} from 'aws-amplify';
+import {getUser} from '../graphql/queries';
+
 
 const CustomSidebarMenu = (props) => {
 
   const [userName, setUserName] = useState("none");
+  const [clientID, setclientID] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [profilePic, setProfilePic] = useState(avatars_url[0]);
 
-
+  async function fetchUserData() {
+    const manga = await API.graphql(graphqlOperation(getUser, { id: clientID} ));
+    setProfilePic()
+  }
 
 
   // saved username
   Auth.currentAuthenticatedUser()
   .then(user => {
     setUserName(user.username);
+    setclientID(user.pool.clientId)
+    fetchUserData()
   })
   .catch(err => console.log(err))
 

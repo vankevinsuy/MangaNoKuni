@@ -27,6 +27,7 @@ type Chapitre @model
 
 
 type User @model 
+@key(name: "UserByClienID", fields: ["clienID"], queryField: "UserByClienID")
 {
   id: ID!
   clienID: String!
@@ -35,6 +36,7 @@ type User @model
 }
 
 type Reading @model 
+@key(name: "ReadingByClienID", fields: ["clienID"], queryField: "ReadingByClienID")
 {
   id: ID!
   mal_id: String!
