@@ -16,5 +16,44 @@
         "manganokuni57f9f35b": {}
       }
     }
+  },
+  "snoozy": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-manganokuni-snoozy-122610-authRole",
+      "UnauthRoleArn": "arn:aws:iam::899225450445:role/amplify-manganokuni-snoozy-122610-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::899225450445:role/amplify-manganokuni-snoozy-122610-authRole",
+      "Region": "eu-west-2",
+      "DeploymentBucketName": "amplify-manganokuni-snoozy-122610-deployment",
+      "UnauthRoleName": "amplify-manganokuni-snoozy-122610-unauthRole",
+      "StackName": "amplify-manganokuni-snoozy-122610",
+      "StackId": "arn:aws:cloudformation:eu-west-2:899225450445:stack/amplify-manganokuni-snoozy-122610/286a3af0-476d-11eb-8a0a-0a2332494d28",
+      "AmplifyAppId": "d3fkxs7dvb40p"
+    },
+    "categories": {
+      "auth": {
+        "manganokuni57f9f35b": {},
+        "manganokuni8a3f1642": {}
+      }
+    }
+  },
+  "myenv": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-manganokuni-myenv-125458-authRole",
+      "UnauthRoleArn": "arn:aws:iam::899225450445:role/amplify-manganokuni-myenv-125458-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::899225450445:role/amplify-manganokuni-myenv-125458-authRole",
+      "Region": "eu-west-2",
+      "DeploymentBucketName": "amplify-manganokuni-myenv-125458-deployment",
+      "UnauthRoleName": "amplify-manganokuni-myenv-125458-unauthRole",
+      "StackName": "amplify-manganokuni-myenv-125458",
+      "StackId": "arn:aws:cloudformation:eu-west-2:899225450445:stack/amplify-manganokuni-myenv-125458/2e02bce0-4771-11eb-bf43-0a9765b9244c",
+      "AmplifyAppId": "d3fkxs7dvb40p"
+    },
+    "categories": {
+      "auth": {
+        "manganokuni57f9f35b": {},
+        "manganokuni8a3f1642": {},
+        "manganokunif4729c9f": {}
+      }
+    }
   }
 }

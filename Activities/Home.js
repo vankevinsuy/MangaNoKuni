@@ -48,7 +48,6 @@ export default function Home({ navigation }) {
       setDataloading(false)
     } 
     catch (err) { console.error(err) }
-
   }
 
 

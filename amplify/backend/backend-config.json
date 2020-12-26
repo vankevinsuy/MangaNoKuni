@@ -9,7 +9,7 @@
             "authenticationType": "API_KEY",
             "apiKeyConfig": {
               "apiKeyExpirationDays": 365,
-              "description": "manganokuni"
+              "description": "manga app"
             }
           },
           "additionalAuthenticationProviders": []
@@ -19,6 +19,18 @@
   },
   "auth": {
     "manganokuni57f9f35b": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    },
+    "manganokuni8a3f1642": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    },
+    "manganokunif4729c9f": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],

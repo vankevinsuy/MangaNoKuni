@@ -39,7 +39,7 @@ export default function CardManga({ navigation , mangaData}) {
     },
 
     title_japanese : {
-        margin : 10,
+        marginVertical : 10,
         fontSize : 20,
         fontWeight: "bold"
     },
@@ -68,7 +68,7 @@ export default function CardManga({ navigation , mangaData}) {
         </View>
 
         <View style={styles.info_container}>
-            <Text style = {styles.title_japanese}> {mangaData.title_japanese}</Text>
+            <Text style = {styles.title_japanese} adjustsFontSizeToFit = {true} numberOfLines = {1}> {mangaData.title_japanese}</Text>
             <Text style = {styles.title} adjustsFontSizeToFit = {true} numberOfLines = {1}>{mangaData.title}</Text>
             <Text style = {styles.score}>Score : {mangaData.score} / 10</Text>
 
