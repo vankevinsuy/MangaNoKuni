@@ -104,7 +104,8 @@ export const onCreateUser = /* GraphQL */ `
   subscription OnCreateUser {
     onCreateUser {
       id
-      pseudo
+      clienID
+      imgProfil
       createdAt
       updatedAt
     }
@@ -114,7 +115,8 @@ export const onUpdateUser = /* GraphQL */ `
   subscription OnUpdateUser {
     onUpdateUser {
       id
-      pseudo
+      clienID
+      imgProfil
       createdAt
       updatedAt
     }
@@ -124,7 +126,44 @@ export const onDeleteUser = /* GraphQL */ `
   subscription OnDeleteUser {
     onDeleteUser {
       id
-      pseudo
+      clienID
+      imgProfil
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateReading = /* GraphQL */ `
+  subscription OnCreateReading {
+    onCreateReading {
+      id
+      mal_id
+      clienID
+      currentChapter
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateReading = /* GraphQL */ `
+  subscription OnUpdateReading {
+    onUpdateReading {
+      id
+      mal_id
+      clienID
+      currentChapter
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteReading = /* GraphQL */ `
+  subscription OnDeleteReading {
+    onDeleteReading {
+      id
+      mal_id
+      clienID
+      currentChapter
       createdAt
       updatedAt
     }

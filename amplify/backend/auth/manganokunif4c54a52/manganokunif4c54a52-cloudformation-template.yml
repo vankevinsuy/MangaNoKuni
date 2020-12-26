@@ -114,10 +114,6 @@ Parameters:
   
             
         
-  usernameAttributes:
-    Type: CommaDelimitedList
-      
-        
   userPoolGroupList:
     Type: CommaDelimitedList
       
@@ -141,7 +137,7 @@ Resources:
   # Created to allow the UserPool SMS Config to publish via the Simple Notification Service during MFA Process
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !If [ShouldNotCreateEnvResources, 'mangan8a3f1642_sns-role', !Join ['',[ 'sns', '8a3f1642', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
+      RoleName: !If [ShouldNotCreateEnvResources, 'manganf4c54a52_sns-role', !Join ['',[ 'sns', 'f4c54a52', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
       AssumeRolePolicyDocument: 
         Version: "2012-10-17"
         Statement: 
@@ -153,10 +149,10 @@ Resources:
               - "sts:AssumeRole"
             Condition: 
               StringEquals:
-                sts:ExternalId: mangan8a3f1642_role_external_id
+                sts:ExternalId: manganf4c54a52_role_external_id
       Policies: 
         - 
-          PolicyName: mangan8a3f1642-sns-policy
+          PolicyName: manganf4c54a52-sns-policy
           PolicyDocument: 
             Version: "2012-10-17"
             Statement: 
@@ -197,14 +193,12 @@ Resources:
           RequireNumbers: false
           RequireSymbols: false
           RequireUppercase: false
-      
-      UsernameAttributes: !Ref usernameAttributes
           
       MfaConfiguration: !Ref mfaConfiguration
       SmsVerificationMessage: !Ref smsVerificationMessage
       SmsConfiguration: 
         SnsCallerArn: !GetAtt SNSRole.Arn
-        ExternalId: mangan8a3f1642_role_external_id
+        ExternalId: manganf4c54a52_role_external_id
     
   
   UserPoolClientWeb:
@@ -212,7 +206,7 @@ Resources:
   # Depends on UserPool for ID reference
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: mangan8a3f1642_app_clientWeb
+      ClientName: manganf4c54a52_app_clientWeb
       
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
       UserPoolId: !Ref UserPool
@@ -222,7 +216,7 @@ Resources:
   # Depends on UserPool for ID reference
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: mangan8a3f1642_app_client
+      ClientName: manganf4c54a52_app_client
       
       GenerateSecret: !Ref userpoolClientGenerateSecret
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
@@ -233,7 +227,7 @@ Resources:
   # Created to execute Lambda which gets userpool app client config values
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',['upClientLambdaRole', '8a3f1642', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
+      RoleName: !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',['upClientLambdaRole', 'f4c54a52', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -287,7 +281,7 @@ Resources:
   # Marked as depending on UserPoolClientRole for easier to understand CFN sequencing
     Type: 'AWS::IAM::Policy'
     Properties:
-      PolicyName: mangan8a3f1642_userpoolclient_lambda_iam_policy
+      PolicyName: manganf4c54a52_userpoolclient_lambda_iam_policy
       Roles: 
         - !Ref UserPoolClientRole
       PolicyDocument:
@@ -304,7 +298,7 @@ Resources:
   # Marked as depending on UserPoolClientLambdaPolicy for easier to understand CFN sequencing
     Type: 'AWS::IAM::Policy'
     Properties:
-      PolicyName: mangan8a3f1642_userpoolclient_lambda_log_policy
+      PolicyName: manganf4c54a52_userpoolclient_lambda_log_policy
       Roles: 
         - !Ref UserPoolClientRole
       PolicyDocument:
@@ -344,7 +338,7 @@ Resources:
   # Always created
     Type: AWS::Cognito::IdentityPool
     Properties: 
-      IdentityPoolName: !If [ShouldNotCreateEnvResources, 'manganokuni8a3f1642_identitypool_8a3f1642', !Join ['',['manganokuni8a3f1642_identitypool_8a3f1642', '__', !Ref env]]]
+      IdentityPoolName: !If [ShouldNotCreateEnvResources, 'manganokunif4c54a52_identitypool_f4c54a52', !Join ['',['manganokunif4c54a52_identitypool_f4c54a52', '__', !Ref env]]]
       
       CognitoIdentityProviders:
         - ClientId:  !Ref UserPoolClient

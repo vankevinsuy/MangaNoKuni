@@ -29,5 +29,15 @@ type Chapitre @model
 type User @model 
 {
   id: ID!
+  clienID: String!
+  imgProfil: String!
   pseudo: String!
+}
+
+type Reading @model 
+{
+  id: ID!
+  mal_id: String!
+  clienID: String!
+  currentChapter: Int!
 }

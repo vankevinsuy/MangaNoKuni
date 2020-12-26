@@ -85,7 +85,8 @@ export const getUser = /* GraphQL */ `
   query GetUser($id: ID!) {
     getUser(id: $id) {
       id
-      pseudo
+      clienID
+      imgProfil
       createdAt
       updatedAt
     }
@@ -100,7 +101,39 @@ export const listUsers = /* GraphQL */ `
     listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        pseudo
+        clienID
+        imgProfil
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getReading = /* GraphQL */ `
+  query GetReading($id: ID!) {
+    getReading(id: $id) {
+      id
+      mal_id
+      clienID
+      currentChapter
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listReadings = /* GraphQL */ `
+  query ListReadings(
+    $filter: ModelReadingFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listReadings(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        mal_id
+        clienID
+        currentChapter
         createdAt
         updatedAt
       }

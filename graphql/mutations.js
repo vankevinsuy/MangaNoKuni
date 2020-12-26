@@ -125,7 +125,8 @@ export const createUser = /* GraphQL */ `
   ) {
     createUser(input: $input, condition: $condition) {
       id
-      pseudo
+      clienID
+      imgProfil
       createdAt
       updatedAt
     }
@@ -138,7 +139,8 @@ export const updateUser = /* GraphQL */ `
   ) {
     updateUser(input: $input, condition: $condition) {
       id
-      pseudo
+      clienID
+      imgProfil
       createdAt
       updatedAt
     }
@@ -151,7 +153,53 @@ export const deleteUser = /* GraphQL */ `
   ) {
     deleteUser(input: $input, condition: $condition) {
       id
-      pseudo
+      clienID
+      imgProfil
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createReading = /* GraphQL */ `
+  mutation CreateReading(
+    $input: CreateReadingInput!
+    $condition: ModelReadingConditionInput
+  ) {
+    createReading(input: $input, condition: $condition) {
+      id
+      mal_id
+      clienID
+      currentChapter
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateReading = /* GraphQL */ `
+  mutation UpdateReading(
+    $input: UpdateReadingInput!
+    $condition: ModelReadingConditionInput
+  ) {
+    updateReading(input: $input, condition: $condition) {
+      id
+      mal_id
+      clienID
+      currentChapter
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteReading = /* GraphQL */ `
+  mutation DeleteReading(
+    $input: DeleteReadingInput!
+    $condition: ModelReadingConditionInput
+  ) {
+    deleteReading(input: $input, condition: $condition) {
+      id
+      mal_id
+      clienID
+      currentChapter
       createdAt
       updatedAt
     }
