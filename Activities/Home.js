@@ -87,7 +87,7 @@ export default function Home({ navigation }) {
             style = {styles.data}
             data={StateMangas}
             renderItem={renderItem}
-            keyExtractor={manga => manga.id}
+            keyExtractor={item => item.id}
           />
         )
       }

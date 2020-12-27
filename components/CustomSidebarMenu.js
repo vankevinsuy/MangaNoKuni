@@ -21,18 +21,16 @@ const CustomSidebarMenu = (props) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [profilePic, setProfilePic] = useState(avatars_url[0]);
 
-  async function fetchUserData() {
-    const manga = await API.graphql(graphqlOperation(getUser, { id: clientID} ));
-    setProfilePic()
-  }
-
-
   // saved username
   Auth.currentAuthenticatedUser()
   .then(user => {
     setUserName(user.username);
     setclientID(user.pool.clientId)
-    fetchUserData()
+
+    console.log(user.pool.clientId)
+
+    API.graphql(graphqlOperation(getUser, { clienID: user.pool.clientId} )).
+    then( (data) => console.log(data) )
   })
   .catch(err => console.log(err))
 

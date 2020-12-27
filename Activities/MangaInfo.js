@@ -36,12 +36,11 @@ export default function MangaInfo({route, navigation}) {
         const manga = await API.graphql(graphqlOperation(getManga, { id: mangaID} ));
         setMangaData(manga.data.getManga)
 
-        const chap = await API.graphql(graphqlOperation(chapitreByMalId, { mal_id: manga.data.getManga.mal_id , limit : 10000} ));
+        const chap = await API.graphql(graphqlOperation(chapitreByMalId, { mal_id: manga.data.getManga.mal_id , limit : 100} ))
+
         var chapdata = chap.data.ChapitreByMalID.items
         setChapters_list(chapdata.reverse())
-
         setLoadingData(false)
-
     }
 
 
