@@ -210,3 +210,57 @@ export const chapitreByMalId = /* GraphQL */ `
     }
   }
 `;
+export const userByClienId = /* GraphQL */ `
+  query UserByClienId(
+    $clienID: String
+    $sortDirection: ModelSortDirection
+    $filter: ModelUserFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    UserByClienID(
+      clienID: $clienID
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        clienID
+        imgProfil
+        pseudo
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const readingByClienId = /* GraphQL */ `
+  query ReadingByClienId(
+    $clienID: String
+    $sortDirection: ModelSortDirection
+    $filter: ModelReadingFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    ReadingByClienID(
+      clienID: $clienID
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        mal_id
+        clienID
+        currentChapter
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;

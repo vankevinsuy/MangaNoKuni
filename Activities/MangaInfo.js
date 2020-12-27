@@ -22,25 +22,55 @@ export default function MangaInfo({route, navigation}) {
     const [user_chapter, setValue_chapter] = useState(10)
     const [mangaData, setMangaData] = useState({})    
     const [chapters_list, setChapters_list] = useState([])
+    const [nextToken , setNextToken] = useState(null)
+
+    const [chapterLoading, setChapterLoading] = useState({flex : 1, alignItems : 'center' , justifyContent : 'center' , marginVertical : 10});
 
 
     const [loadingData, setLoadingData] = useState(true)
 
     useEffect(() => {
         setLoadingData(true)
-        fetchManga()
+        init_fetchManga()
       }, [])
 
 
-    async function fetchManga() {
+    //get 20 first chapters
+    async function init_fetchManga() {
         const manga = await API.graphql(graphqlOperation(getManga, { id: mangaID} ));
         setMangaData(manga.data.getManga)
 
-        const chap = await API.graphql(graphqlOperation(chapitreByMalId, { mal_id: manga.data.getManga.mal_id , limit : 100} ))
+        const chap = await API.graphql(graphqlOperation(chapitreByMalId, { mal_id: manga.data.getManga.mal_id, limit: 20, sortDirection: 'DESC'} ))
+        //console.log(chap.data.ChapitreByMalID.nextToken)
+        setNextToken(chap.data.ChapitreByMalID.nextToken)
 
         var chapdata = chap.data.ChapitreByMalID.items
-        setChapters_list(chapdata.reverse())
+        setChapters_list(chapdata)
         setLoadingData(false)
+    }
+
+    const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
+        const paddingToBottom = 5;
+        // console.log(layoutMeasurement.height + contentOffset.y)
+        // console.log(contentSize.height)
+        // console.log("---------------------------------")
+
+        return layoutMeasurement.height + contentOffset.y >=
+          contentSize.height - paddingToBottom;
+    };
+
+    //get 100 more chapters
+    async function fetchMoreChapter() {
+        if(nextToken === null){
+            setChapterLoading({display : 'none'})
+        }
+        else{
+            const chap = await API.graphql(graphqlOperation(chapitreByMalId, { mal_id: mangaData.mal_id, limit: 100, sortDirection: 'DESC', nextToken : nextToken} ))
+            setNextToken(chap.data.ChapitreByMalID.nextToken)
+    
+            var chapdata = chapters_list.concat(chap.data.ChapitreByMalID.items)
+            setChapters_list(chapdata)
+        }
     }
 
 
@@ -131,7 +161,7 @@ export default function MangaInfo({route, navigation}) {
 
 
 
-            <ScrollView style = {{flex : 1}}>
+            <ScrollView style = {{flex : 1}} onScroll={({nativeEvent}) => {if (isCloseToBottom(nativeEvent)) {fetchMoreChapter(nextToken)} }}>
 
                 <View style={styles.details}>
                     <Text style = {styles.title_japanese}>{mangaData.title_japanese}</Text>
@@ -166,6 +196,10 @@ export default function MangaInfo({route, navigation}) {
                         )
                     }
 
+                </View>
+
+                <View style = {chapterLoading}>
+                    <Spinner size='giant'/>
                 </View>
                 
             </ScrollView>             

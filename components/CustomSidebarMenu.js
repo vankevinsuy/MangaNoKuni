@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { SafeAreaView,  View,  StyleSheet,  Text, Modal, Button, ScrollView} from 'react-native';
 import {  DrawerContentScrollView,  DrawerItemList,  DrawerItem,} from '@react-navigation/drawer';
 import { Avatar } from 'react-native-elements';
 
-import Amplify, { Auth } from 'aws-amplify';
+import Amplify, { Auth, input } from 'aws-amplify';
 import config from '../aws-exports';
 Amplify.configure(config);
 
@@ -11,28 +11,46 @@ import {avatars_url} from '../assets/Avatars'
 
 // graphQL
 import {API, graphqlOperation} from 'aws-amplify';
-import {getUser} from '../graphql/queries';
-
+import {userByClienId} from '../graphql/queries'
+import {updateUser} from '../graphql/mutations'
 
 const CustomSidebarMenu = (props) => {
 
-  const [userName, setUserName] = useState("none");
-  const [clientID, setclientID] = useState();
+  const [userPseudo, setUserPseudo] = useState("none");
+  const [clientData, setclientData] = useState();
+  const [profilePic, setProfilePic] = useState();
+
   const [modalVisible, setModalVisible] = useState(false);
-  const [profilePic, setProfilePic] = useState(avatars_url[0]);
 
-  // saved username
-  Auth.currentAuthenticatedUser()
-  .then(user => {
-    setUserName(user.username);
-    setclientID(user.pool.clientId)
+  useEffect(() => {
+    Auth.currentAuthenticatedUser().
+    then(user => {   
+      fetchUser(user.pool.clientId)
+    })
+  }, [])
 
-    console.log(user.pool.clientId)
+  async function fetchUser(client_ID) {
+    try {
+      const x = await API.graphql(graphqlOperation(userByClienId, {clienID : client_ID}))
+      const user = x.data.UserByClienID.items[0]
+      // console.log(user)
+      setclientData(user)
 
-    API.graphql(graphqlOperation(getUser, { clienID: user.pool.clientId} )).
-    then( (data) => console.log(data) )
-  })
-  .catch(err => console.log(err))
+      setUserPseudo(user.pseudo);
+      setProfilePic(user.imgProfil)
+    }
+    catch (err) { console.error(err) }
+}
+
+  async function changeProfilPic(new_url){
+    try{
+      await API.graphql(graphqlOperation(updateUser, {input : {id : clientData.id ,  imgProfil : new_url, pseudo : clientData.pseudo , clienID : clientData.clienID} } ))
+      .then(
+        setProfilePic(new_url)
+      )
+    }
+    catch (err) { console.error(err) }
+  }
 
   const styles = StyleSheet.create({
     sideMenuProfileIcon: {
@@ -96,7 +114,7 @@ const CustomSidebarMenu = (props) => {
       >
       </Avatar>
 
-      <Text  style={styles.user_name}>{userName}</Text>
+      <Text  style={styles.user_name}>{userPseudo}</Text>
 
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
@@ -122,7 +140,7 @@ const CustomSidebarMenu = (props) => {
                         key = {index}
                         size= 'xlarge'
                         rounded
-                        onPress={() => { setProfilePic(url) ; setModalVisible(!modalVisible);}}
+                        onPress={() => { changeProfilPic(url) ; setModalVisible(!modalVisible);}}
                         source={{uri: url }}
                       >
                       </Avatar>

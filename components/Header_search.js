@@ -70,8 +70,7 @@ const HeaderSearch = (props) => {
                 rightIconContainerStyle={{}}
                 loadingProps={{}}
                 onChangeText={newVal => newVal}
-                //onClearText={() => console.log(onClearText())}
-                placeholder="Type query here..."
+                placeholder="Search manga ..."
                 placeholderTextColor="#888"
                 round
                 //value={value}
