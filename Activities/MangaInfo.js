@@ -1,5 +1,5 @@
 import React ,{useState, useEffect} from 'react';
-import { StyleSheet, Image, ScrollView, StatusBar, TouchableOpacity} from 'react-native';
+import { StyleSheet, Image, ScrollView, StatusBar, TouchableOpacity, Button} from 'react-native';
 import { Layout as View, Text, useTheme , Spinner } from '@ui-kitten/components';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,44 +9,79 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as app_common_style from '../assets/themes/common_style';
 import { ThemeContext } from '../assets/themes/theme-context';
 
+import Amplify, { Auth, input } from 'aws-amplify';
+import config from '../aws-exports';
+Amplify.configure(config);
+
 // graphQL
 import {API, graphqlOperation} from 'aws-amplify';
-import {getManga, chapitreByMalId} from '../graphql/queries';
-
+import {getManga, chapitreByMalId, readingByClienId} from '../graphql/queries';
+import {createReading, updateReading} from '../graphql/mutations';
 
 
 export default function MangaInfo({route, navigation}) {
 
     const {mangaID} = route.params;
-
-    const [user_chapter, setValue_chapter] = useState(10)
-    const [mangaData, setMangaData] = useState({})    
+    const [mangaData, setMangaData] = useState()    
     const [chapters_list, setChapters_list] = useState([])
     const [nextToken , setNextToken] = useState(null)
-
     const [chapterLoading, setChapterLoading] = useState({flex : 1, alignItems : 'center' , justifyContent : 'center' , marginVertical : 10});
+    const [currentChapter, setCurrentChapter] = useState(100)   
 
 
     const [loadingData, setLoadingData] = useState(true)
 
     useEffect(() => {
         setLoadingData(true)
-        init_fetchManga()
-      }, [])
 
+        init_fetchManga().then(() => {setLoadingData(false)})
+        
+      }, [])
 
     //get 20 first chapters
     async function init_fetchManga() {
-        const manga = await API.graphql(graphqlOperation(getManga, { id: mangaID} ));
-        setMangaData(manga.data.getManga)
+        try{
+            const manga = await API.graphql(graphqlOperation(getManga, { id: mangaID} ));
+            setMangaData(manga.data.getManga)
+    
+            const chap = await API.graphql(graphqlOperation(chapitreByMalId, { mal_id: manga.data.getManga.mal_id, limit: 20, sortDirection: 'DESC'} ))
+            //console.log(chap.data.ChapitreByMalID.nextToken)
+            setNextToken(chap.data.ChapitreByMalID.nextToken)
+    
+            var chapdata = chap.data.ChapitreByMalID.items
+            setChapters_list(chapdata)
+            // setLoadingData(false)
 
-        const chap = await API.graphql(graphqlOperation(chapitreByMalId, { mal_id: manga.data.getManga.mal_id, limit: 20, sortDirection: 'DESC'} ))
-        //console.log(chap.data.ChapitreByMalID.nextToken)
-        setNextToken(chap.data.ChapitreByMalID.nextToken)
+            await Auth.currentAuthenticatedUser()
+            .then(async (user) => {   
+                const client =  user.pool.clientId ;
+                console.log(client)
+                console.log(manga.data.getManga.mal_id)
 
-        var chapdata = chap.data.ChapitreByMalID.items
-        setChapters_list(chapdata)
-        setLoadingData(false)
+                const current_chap = await API.graphql(graphqlOperation(readingByClienId, { clienID: client, filter : {mal_id: {eq: manga.data.getManga.mal_id}} } ))
+                if(current_chap.data.ReadingByClienID.items.length === 0){
+                    console.log("pas de chapitre on va le créer")
+                    try{
+                        API.graphql(graphqlOperation(createReading, {input: 
+                            {
+                            clienID : client,
+                            mal_id :  manga.data.getManga.mal_id,
+                            currentChapter : 1
+                            } 
+                        }))
+                    }
+                    catch (err) { console.error(err) }
+                }
+                else{
+                    console.log("donnée existante")
+                    console.log(current_chap.data.ReadingByClienID.items[0].currentChapter)
+                    setCurrentChapter(current_chap.data.ReadingByClienID.items[0].currentChapter)
+                }
+            })
+
+
+        }
+        catch (err) { console.error(err) }
     }
 
     const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
@@ -89,7 +124,7 @@ export default function MangaInfo({route, navigation}) {
     },
 
     container_header: {
-        flex : 0.7,
+        flex : 0.8,
         backgroundColor: themeDATA['background-basic-color-1'],
     },
 
@@ -157,15 +192,18 @@ export default function MangaInfo({route, navigation}) {
                         uri: mangaData.image_url,
                     }}
                 />
+
+                <Text style = {styles.title_japanese}>{mangaData.title_japanese}</Text>
+                <Text style = {styles.title}>{mangaData.title}</Text>
+
+                <Button title = {"resume from chapter " + currentChapter.toString()} color="tomato" onPress = {() => { navigation.navigate("Reading", params = {chapitreData: {}, type : "light_data"} )} }/>
             </View>
 
 
 
-            <ScrollView style = {{flex : 1}} onScroll={({nativeEvent}) => {if (isCloseToBottom(nativeEvent)) {fetchMoreChapter(nextToken)} }}>
+            <ScrollView style = {{flex : 1, marginTop : 20}} onScroll={({nativeEvent}) => {if (isCloseToBottom(nativeEvent)) {fetchMoreChapter(nextToken)} }}>
 
                 <View style={styles.details}>
-                    <Text style = {styles.title_japanese}>{mangaData.title_japanese}</Text>
-                    <Text style = {styles.title}>{mangaData.title}</Text>
 
                     <Text style = {{fontWeight: 'bold'}}>Author(s) :  
                         <Text> {mangaData.authors}</Text>
@@ -188,7 +226,7 @@ export default function MangaInfo({route, navigation}) {
                     {
                         chapters_list.map((chapitre, index) => 
                         
-                        <TouchableOpacity key = {index} style = {{margin : 10}} onPress = {() => { navigation.navigate("Reading", params = {chapitreData: chapitre} ) }  }>
+                        <TouchableOpacity key = {index} style = {{margin : 10}} onPress = {() => { navigation.navigate("Reading", params = {chapitreData: chapitre, type : "full_data"} ) }  }>
                             <Text style = {{fontWeight: 'bold', fontSize : 20}}>{chapitre.num_chapitre}</Text>
                             <Text>{chapitre.title}</Text>
                         </TouchableOpacity>

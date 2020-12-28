@@ -19,7 +19,9 @@ import {} from '../graphql/queries';
 
 export default function Reading({route, navigation}) {
 
-    const {chapitreData} = route.params;
+    const {chapitreData, type} = route.params;
+
+    console.log(type)
 
     const [webViewSource, setwebViewSource] = useState({ uri: chapitreData.url });
     const [webViewStyle, setwebViewStyle] = useState({display : 'none'});

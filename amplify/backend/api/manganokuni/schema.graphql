@@ -39,7 +39,6 @@ type User @model
 type Reading @model 
 @key(name: "ReadingByClienID", fields: ["clienID"], queryField: "ReadingByClienID")
 {
-  id: ID!
   mal_id: String!
   clienID: String!
   currentChapter: Float!
