@@ -18,6 +18,7 @@ export const createManga = /* GraphQL */ `
       score
       genre
       authors
+      title_search
       createdAt
       updatedAt
     }
@@ -40,6 +41,7 @@ export const updateManga = /* GraphQL */ `
       score
       genre
       authors
+      title_search
       createdAt
       updatedAt
     }
@@ -62,6 +64,7 @@ export const deleteManga = /* GraphQL */ `
       score
       genre
       authors
+      title_search
       createdAt
       updatedAt
     }

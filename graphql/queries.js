@@ -15,6 +15,7 @@ export const getManga = /* GraphQL */ `
       score
       genre
       authors
+      title_search
       createdAt
       updatedAt
     }
@@ -39,6 +40,7 @@ export const listMangas = /* GraphQL */ `
         score
         genre
         authors
+        title_search
         createdAt
         updatedAt
       }
@@ -172,6 +174,7 @@ export const mangaByMalId = /* GraphQL */ `
         score
         genre
         authors
+        title_search
         createdAt
         updatedAt
       }

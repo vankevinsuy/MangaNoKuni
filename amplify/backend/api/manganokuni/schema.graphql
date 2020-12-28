@@ -12,6 +12,7 @@ type Manga @model
   score:String!
   genre:[String!]
   authors:String!
+  title_search: String!
 }
 
 type Chapitre @model 

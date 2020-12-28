@@ -43,7 +43,18 @@ export default function Home({ navigation }) {
   async function fetchMangas() {
     try {
       const mangaData = await API.graphql(graphqlOperation(listMangas))
-      const mangas = mangaData.data.listMangas.items
+      const mangas = mangaData.data.listMangas.items.sort(            
+        function(a, b) {
+        var nameA = a.title_search;
+        var nameB = b.title_search;
+        if (nameA < nameB) {
+          return -1; //nameA comes first
+        }
+        if (nameA > nameB) {
+          return 1; // nameB comes first
+        }
+        return 0;  // names must be equal
+      })
       setStateMangas(mangas)
       setDataloading(false)
     } 
@@ -73,7 +84,7 @@ export default function Home({ navigation }) {
         barStyle = {(themeContext.theme === "dark") ?  'light-content' :  'dark-content'}
       />
       
-      <HeaderSearch toogle = {toogleDrawer}/>
+      <HeaderSearch toogle = {toogleDrawer} setStateMangas = {setStateMangas}/>
 
       { 
         Dataloading ?

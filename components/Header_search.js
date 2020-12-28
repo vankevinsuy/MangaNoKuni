@@ -1,4 +1,4 @@
-import React from 'react';
+import React , {useState} from 'react';
 import { StyleSheet , TouchableOpacity, Image} from 'react-native';
 import { Layout as View, Text, useTheme } from '@ui-kitten/components';
 
@@ -10,10 +10,45 @@ import * as dark_theme from '../assets/themes/dark';
 import * as app_common_style from '../assets/themes/common_style';
 import { ThemeContext } from '../assets/themes/theme-context';
 
+// graphQL
+import {API, graphqlOperation} from 'aws-amplify';
+import {listMangas} from '../graphql/queries';
+
 const HeaderSearch = (props) => {
 
     const themeContext = React.useContext(ThemeContext);
     const themeDATA = useTheme();
+
+    const [myText, setMyText] = useState('');
+
+    async function searchMangas(txt) {
+
+        const formalized_text = txt.toUpperCase().split(" ").join("").replace(/[^a-zA-Z0-9]/g, '')
+        console.log(formalized_text)
+
+        try {
+          const mangaData = await API.graphql(graphqlOperation(listMangas, {filter : {title_search: {contains: formalized_text}} }))
+          //console.log(mangaData.data.listMangas.items)
+          props.setStateMangas(mangaData.data.listMangas.items.sort( 
+
+            function(a, b) {
+                var nameA = a.title_search; // ignore upper and lowercase
+                var nameB = b.title_search; // ignore upper and lowercase
+                if (nameA < nameB) {
+                  return -1; //nameA comes first
+                }
+                if (nameA > nameB) {
+                  return 1; // nameB comes first
+                }
+                return 0;  // names must be equal
+              })
+
+           ) 
+
+        } 
+        catch (err) { console.error(err) }
+    }
+
 
     const styles = StyleSheet.create({
         container: {
@@ -69,17 +104,13 @@ const HeaderSearch = (props) => {
                 leftIconContainerStyle={{}}
                 rightIconContainerStyle={{}}
                 loadingProps={{}}
-                onChangeText={newVal => newVal}
+                onChangeText={(newVal) => {setMyText(newVal); searchMangas(newVal)} }
                 placeholder="Search manga ..."
                 placeholderTextColor="#888"
                 round
-                //value={value}
+                value={myText}
+                onClear = {() => {setMyText(''); console.log("clear")}}
             />
-                    
-            <TouchableOpacity>
-                <Text style = {styles.SearchBar_clear_icon}>Clear</Text>
-            </TouchableOpacity>
-
         </View>
 
 
