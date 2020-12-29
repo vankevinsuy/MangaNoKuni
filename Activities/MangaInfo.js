@@ -16,7 +16,7 @@ Amplify.configure(config);
 // graphQL
 import {API, graphqlOperation} from 'aws-amplify';
 import {getManga, chapitreByMalId, readingByClienId} from '../graphql/queries';
-import {createReading, updateReading} from '../graphql/mutations';
+import {createReading} from '../graphql/mutations';
 
 
 export default function MangaInfo({route, navigation}) {
@@ -55,12 +55,12 @@ export default function MangaInfo({route, navigation}) {
             await Auth.currentAuthenticatedUser()
             .then(async (user) => {   
                 const client =  user.pool.clientId ;
-                console.log(client)
-                console.log(manga.data.getManga.mal_id)
+                // console.log(client)
+                // console.log(manga.data.getManga.mal_id)
 
                 const current_chap = await API.graphql(graphqlOperation(readingByClienId, { clienID: client, filter : {mal_id: {eq: manga.data.getManga.mal_id}} } ))
                 if(current_chap.data.ReadingByClienID.items.length === 0){
-                    console.log("pas de chapitre on va le créer")
+                    // console.log("pas de chapitre on va le créer")
                     try{
                         API.graphql(graphqlOperation(createReading, {input: 
                             {
@@ -73,8 +73,8 @@ export default function MangaInfo({route, navigation}) {
                     catch (err) { console.error(err) }
                 }
                 else{
-                    console.log("donnée existante")
-                    console.log(current_chap.data.ReadingByClienID.items[0].currentChapter)
+                    // console.log("donnée existante")
+                    // console.log(current_chap.data.ReadingByClienID.items[0].currentChapter)
                     setCurrentChapter(current_chap.data.ReadingByClienID.items[0].currentChapter)
                 }
             })
@@ -196,7 +196,7 @@ export default function MangaInfo({route, navigation}) {
                 <Text style = {styles.title_japanese}>{mangaData.title_japanese}</Text>
                 <Text style = {styles.title}>{mangaData.title}</Text>
 
-                <Button title = {"resume from chapter " + currentChapter.toString()} color="tomato" onPress = {() => { navigation.navigate("Reading", params = {chapitreData: {}, type : "light_data"} )} }/>
+                <Button title = {"resume from chapter " + currentChapter.toString()} color="tomato" onPress = {() => { navigation.navigate("Reading", params = {chapitreData: {mal_id: mangaData.mal_id, current_chap:currentChapter}, type : 0} )} }/>
             </View>
 
 
@@ -226,7 +226,7 @@ export default function MangaInfo({route, navigation}) {
                     {
                         chapters_list.map((chapitre, index) => 
                         
-                        <TouchableOpacity key = {index} style = {{margin : 10}} onPress = {() => { navigation.navigate("Reading", params = {chapitreData: chapitre, type : "full_data"} ) }  }>
+                        <TouchableOpacity key = {index} style = {{margin : 10}} onPress = {() => { navigation.navigate("Reading", params = {chapitreData: chapitre, type : 1} ) }  }>
                             <Text style = {{fontWeight: 'bold', fontSize : 20}}>{chapitre.num_chapitre}</Text>
                             <Text>{chapitre.title}</Text>
                         </TouchableOpacity>

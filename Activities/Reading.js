@@ -1,5 +1,5 @@
 import React ,{useState, useEffect} from 'react';
-import { StyleSheet, StatusBar} from 'react-native';
+import { StyleSheet, StatusBar, Button, } from 'react-native';
 import { Layout as View, Text, useTheme , Spinner } from '@ui-kitten/components';
 import { WebView } from 'react-native-webview';
 
@@ -13,42 +13,80 @@ import { ThemeContext } from '../assets/themes/theme-context';
 
 // graphQL
 import {API, graphqlOperation} from 'aws-amplify';
-import {} from '../graphql/queries';
+import {chapitreByMalId} from '../graphql/queries';
+
 
 
 
 export default function Reading({route, navigation}) {
 
-    const {chapitreData, type} = route.params;
-
-    console.log(type)
-
-    const [webViewSource, setwebViewSource] = useState({ uri: chapitreData.url });
-    const [webViewStyle, setwebViewStyle] = useState({display : 'none'});
-
     const themeContext = React.useContext(ThemeContext);
     const themeDATA = useTheme();
 
     const styles = StyleSheet.create({
-    container: {
-        flex : 1,
-        backgroundColor: themeDATA['background-basic-color-1'],
-    },
+        container: {
+            flex : 1,
+            backgroundColor: themeDATA['background-basic-color-1'],
+        },
+        
+        container_loading: {
+            flex : 1,
+            backgroundColor: themeDATA['background-basic-color-1'],
+            alignItems : 'center' , 
+            justifyContent : 'center'
+        },
     
-    container_loading: {
-        flex : 1,
-        backgroundColor: themeDATA['background-basic-color-1'],
-        alignItems : 'center' , 
-        justifyContent : 'center'
-    },
+        WebView : {
+            backgroundColor: themeDATA['background-basic-color-1'],
+        },
 
-    WebView : {
-        backgroundColor: themeDATA['background-basic-color-1'],
-    }
-
+    
     });
 
+    const [current_chap, setCurrent_chap] = useState(route.params.chapitreData.num_chapitre);
+    const [chapitreData, setChapitreData] = useState(route.params.chapitreData);
     const [loadingStyle, setLoadingStyle] = useState(styles.container_loading);
+    const [webViewSource, setwebViewSource] = useState({ uri: route.params.chapitreData.url });
+    const [webViewStyle, setwebViewStyle] = useState({display : 'none'});
+
+    useEffect(() => {
+
+        if(route.params.type == 0){
+            fetchChapter(chapitreData).then((val) => {
+                setChapitreData(val); 
+                setwebViewSource({ uri: val.url })
+                setLoadingStyle(styles.container_loading)
+                setwebViewStyle({display : 'none'})
+                setCurrent_chap(val.current_chap)
+            })
+        }
+
+      }, [])
+
+    //get chapter data
+    async function fetchChapter(chapitreData) {
+        try{
+            const chapitre = await API.graphql(graphqlOperation(chapitreByMalId, { mal_id: chapitreData.mal_id, num_chapitre: {eq: chapitreData.current_chap} } ));  
+            setChapitreData(chapitre.data.ChapitreByMalID.items[0])
+            return chapitre.data.ChapitreByMalID.items[0]
+        }
+        catch (err) { console.error(err) }
+    }
+
+    //get next chapter data
+    async function fetchNextChapter() {
+        setwebViewStyle({display : 'none'})
+        setLoadingStyle(styles.container_loading)
+        try{
+            const chapitre = await API.graphql(graphqlOperation(chapitreByMalId, { mal_id: chapitreData.mal_id, num_chapitre: {eq: chapitreData.num_chapitre + 1} } ));  
+
+            const newChapData = chapitre.data.ChapitreByMalID.items[0]
+
+            setChapitreData(newChapData)
+            setwebViewSource({ uri:  newChapData.url })
+        }
+        catch (err) { console.error(err) }
+    }
 
 
 
@@ -60,7 +98,7 @@ export default function Reading({route, navigation}) {
         barStyle = {(themeContext.theme === "dark") ?  'light-content' :  'dark-content'}
         />
 
-        <View style={styles.container}> 
+        <View style={styles.container} > 
 
             <View style = {loadingStyle}>
                 <Spinner size='giant'/>
@@ -80,6 +118,8 @@ export default function Reading({route, navigation}) {
                     setwebViewStyle({flex : 1})
                 }}
             />
+
+            <Button title={"Next chapter"} color="tomato" onPress = { () => { fetchNextChapter()  } }/>
         </View>
 
         </SafeAreaView>
