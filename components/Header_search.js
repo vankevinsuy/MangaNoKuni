@@ -24,11 +24,9 @@ const HeaderSearch = (props) => {
     async function searchMangas(txt) {
 
         const formalized_text = txt.toUpperCase().split(" ").join("").replace(/[^a-zA-Z0-9]/g, '')
-        console.log(formalized_text)
 
         try {
           const mangaData = await API.graphql(graphqlOperation(listMangas, {filter : {title_search: {contains: formalized_text}} }))
-          //console.log(mangaData.data.listMangas.items)
           props.setStateMangas(mangaData.data.listMangas.items.sort( 
 
             function(a, b) {
@@ -109,7 +107,7 @@ const HeaderSearch = (props) => {
                 placeholderTextColor="#888"
                 round
                 value={myText}
-                onClear = {() => {setMyText(''); console.log("clear")}}
+                onClear = {() => {setMyText(''); }}
             />
         </View>
 

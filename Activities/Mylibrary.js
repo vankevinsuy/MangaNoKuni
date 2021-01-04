@@ -39,7 +39,7 @@ export default function Mylibrary(props) {
       />
 
       <Header toogle = {toogleDrawer}/>
-      <Text>Favoris</Text>
+      <Text>Library</Text>
 
     </SafeAreaView>
   );

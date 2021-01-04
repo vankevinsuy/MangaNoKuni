@@ -17,6 +17,8 @@ Amplify.configure(config);
 import {API, graphqlOperation} from 'aws-amplify';
 import {getManga, chapitreByMalId, readingByClienId} from '../graphql/queries';
 import {createReading} from '../graphql/mutations';
+import { updateReading } from '../graphql/mutations';
+
 
 
 export default function MangaInfo({route, navigation}) {
@@ -26,7 +28,7 @@ export default function MangaInfo({route, navigation}) {
     const [chapters_list, setChapters_list] = useState([])
     const [nextToken , setNextToken] = useState(null)
     const [chapterLoading, setChapterLoading] = useState({flex : 1, alignItems : 'center' , justifyContent : 'center' , marginVertical : 10});
-    const [currentChapter, setCurrentChapter] = useState(100)   
+    const [currentChapter, setCurrentChapter] = useState(1)   
 
 
     const [loadingData, setLoadingData] = useState(true)
@@ -86,10 +88,6 @@ export default function MangaInfo({route, navigation}) {
 
     const isCloseToBottom = ({layoutMeasurement, contentOffset, contentSize}) => {
         const paddingToBottom = 5;
-        // console.log(layoutMeasurement.height + contentOffset.y)
-        // console.log(contentSize.height)
-        // console.log("---------------------------------")
-
         return layoutMeasurement.height + contentOffset.y >=
           contentSize.height - paddingToBottom;
     };
@@ -106,6 +104,23 @@ export default function MangaInfo({route, navigation}) {
             var chapdata = chapters_list.concat(chap.data.ChapitreByMalID.items)
             setChapters_list(chapdata)
         }
+    }
+
+    //update chapter reading in db
+    async function updateReadingTable(chapitre) {
+
+        await Auth.currentAuthenticatedUser()
+        .then(async (user) => {   
+            const clientID =  user.pool.clientId ;
+            try{
+                const reading = await API.graphql(graphqlOperation(readingByClienId, {clienID: clientID, filter: {mal_id: {eq: mangaData.mal_id}}} )); 
+                const readingData =  reading.data.ReadingByClienID.items[0]
+    
+                await API.graphql(graphqlOperation(updateReading, {input: {clienID: clientID, currentChapter: chapitre.num_chapitre, mal_id: mangaData.mal_id, id: readingData.id}} ))
+                navigation.navigate("Reading", params = {chapitreData: chapitre, type : 1} )
+            }
+            catch (err) { console.error(err) }
+        })
     }
 
 
@@ -184,8 +199,9 @@ export default function MangaInfo({route, navigation}) {
     ):
     (
         <View style={styles.container}> 
-
+        
             <View style={styles.container_header}>
+
                 <Image
                     style={styles.header_image}
                     source={{
@@ -193,10 +209,21 @@ export default function MangaInfo({route, navigation}) {
                     }}
                 />
 
+                <TouchableOpacity style={{backgroundColor: 'tomato', alignSelf: 'flex-start' , position : 'absolute', top :1, right:1, padding : 5}}>
+                    <Text style={{fontSize:15}}>Add to my library</Text>
+                </TouchableOpacity>
+
+
+
+
                 <Text style = {styles.title_japanese}>{mangaData.title_japanese}</Text>
                 <Text style = {styles.title}>{mangaData.title}</Text>
 
-                <Button title = {"resume from chapter " + currentChapter.toString()} color="tomato" onPress = {() => { navigation.navigate("Reading", params = {chapitreData: {mal_id: mangaData.mal_id, current_chap:currentChapter}, type : 0} )} }/>
+                <TouchableOpacity style = {{backgroundColor:'tomato', alignItems: "center"}} onPress = {() => { navigation.navigate("Reading", params = {chapitreData: {mal_id: mangaData.mal_id, current_chap:currentChapter}, type : 0} )} } >
+                    <Text style = {{fontSize : 20, marginVertical : 5}}>
+                        {"Resume from chapter " + currentChapter.toString()}
+                    </Text>
+                </TouchableOpacity>
             </View>
 
 
@@ -226,7 +253,7 @@ export default function MangaInfo({route, navigation}) {
                     {
                         chapters_list.map((chapitre, index) => 
                         
-                        <TouchableOpacity key = {index} style = {{margin : 10}} onPress = {() => { navigation.navigate("Reading", params = {chapitreData: chapitre, type : 1} ) }  }>
+                        <TouchableOpacity key = {index} style = {{margin : 10}} onPress = {() => { updateReadingTable(chapitre) } }>
                             <Text style = {{fontWeight: 'bold', fontSize : 20}}>{chapitre.num_chapitre}</Text>
                             <Text>{chapitre.title}</Text>
                         </TouchableOpacity>

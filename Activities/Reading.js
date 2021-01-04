@@ -1,11 +1,13 @@
 import React ,{useState, useEffect} from 'react';
-import { StyleSheet, StatusBar, Button, } from 'react-native';
-import { Layout as View, Text, useTheme , Spinner } from '@ui-kitten/components';
+import { StyleSheet, StatusBar, TouchableOpacity, Alert } from 'react-native';
+import { Layout as View, useTheme , Spinner , Text} from '@ui-kitten/components';
 import { WebView } from 'react-native-webview';
-
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import Amplify, { Auth, input } from 'aws-amplify';
+import config from '../aws-exports';
+Amplify.configure(config);
 
 // themes import 
 import * as app_common_style from '../assets/themes/common_style';
@@ -13,7 +15,8 @@ import { ThemeContext } from '../assets/themes/theme-context';
 
 // graphQL
 import {API, graphqlOperation} from 'aws-amplify';
-import {chapitreByMalId} from '../graphql/queries';
+import {chapitreByMalId, readingByClienId} from '../graphql/queries';
+import { updateReading } from '../graphql/mutations';
 
 
 
@@ -40,6 +43,10 @@ export default function Reading({route, navigation}) {
             backgroundColor: themeDATA['background-basic-color-1'],
         },
 
+        tinyLogo: {
+            width: 200,
+            height: 200,
+          },
     
     });
 
@@ -49,7 +56,14 @@ export default function Reading({route, navigation}) {
     const [webViewSource, setwebViewSource] = useState({ uri: route.params.chapitreData.url });
     const [webViewStyle, setwebViewStyle] = useState({display : 'none'});
 
+    const [clientID, setclientData] = useState();
+
     useEffect(() => {
+
+        Auth.currentAuthenticatedUser().
+        then(user => {   
+            setclientData(user.pool.clientId)
+        })
 
         if(route.params.type == 0){
             fetchChapter(chapitreData).then((val) => {
@@ -64,9 +78,9 @@ export default function Reading({route, navigation}) {
       }, [])
 
     //get chapter data
-    async function fetchChapter(chapitreData) {
+    async function fetchChapter(Data) {
         try{
-            const chapitre = await API.graphql(graphqlOperation(chapitreByMalId, { mal_id: chapitreData.mal_id, num_chapitre: {eq: chapitreData.current_chap} } ));  
+            const chapitre = await API.graphql(graphqlOperation(chapitreByMalId, { mal_id: Data.mal_id, num_chapitre: {eq: Data.current_chap} } ));  
             setChapitreData(chapitre.data.ChapitreByMalID.items[0])
             return chapitre.data.ChapitreByMalID.items[0]
         }
@@ -75,19 +89,43 @@ export default function Reading({route, navigation}) {
 
     //get next chapter data
     async function fetchNextChapter() {
-        setwebViewStyle({display : 'none'})
-        setLoadingStyle(styles.container_loading)
+
         try{
             const chapitre = await API.graphql(graphqlOperation(chapitreByMalId, { mal_id: chapitreData.mal_id, num_chapitre: {eq: chapitreData.num_chapitre + 1} } ));  
 
             const newChapData = chapitre.data.ChapitreByMalID.items[0]
 
-            setChapitreData(newChapData)
-            setwebViewSource({ uri:  newChapData.url })
+            console.log(typeof newChapData)
+
+            if(newChapData != undefined){
+                setwebViewStyle({display : 'none'})
+                setLoadingStyle(styles.container_loading)
+
+                setChapitreData(newChapData)
+                setwebViewSource({ uri:  newChapData.url })
+    
+                updateReadingTable()
+            }
+            else{
+                console.log("pas de chapitre suivant")
+                Alert.alert("Oups", "This is the last chapter 🤓")
+            }
+
         }
         catch (err) { console.error(err) }
     }
 
+    //update chapter reading in db
+    async function updateReadingTable() {
+
+        try{
+            const reading = await API.graphql(graphqlOperation(readingByClienId, {clienID: clientID, filter: {mal_id: {eq: chapitreData.mal_id}}} )); 
+            const readingData =  reading.data.ReadingByClienID.items[0]
+
+            await API.graphql(graphqlOperation(updateReading, {input: {clienID: clientID, currentChapter: chapitreData.num_chapitre + 1, mal_id: chapitreData.mal_id, id: readingData.id}} ))
+        }
+        catch (err) { console.error(err) }
+    }
 
 
     return (
@@ -117,9 +155,14 @@ export default function Reading({route, navigation}) {
                     setwebViewSource({ html: chapitreData.images_html })
                     setwebViewStyle({flex : 1})
                 }}
+                pullToRefreshEnabled = {true}
             />
 
-            <Button title={"Next chapter"} color="tomato" onPress = { () => { fetchNextChapter()  } }/>
+            <TouchableOpacity onPress = { () => { fetchNextChapter();} } style = {{backgroundColor:'tomato', alignItems: "center"}}>
+                <Text style = {{fontSize : 20, marginVertical : 5}} >Next chapter</Text>
+            </TouchableOpacity>
+            
+
         </View>
 
         </SafeAreaView>
