@@ -152,7 +152,7 @@ export default function Reading({route, navigation}) {
 
                 onLoadEnd = {() => {
                     setLoadingStyle({display : 'none'})
-                    setwebViewSource({ html: chapitreData.images_html })
+                    //setwebViewSource({ html: chapitreData.images_html })
                     setwebViewStyle({flex : 1})
                 }}
                 pullToRefreshEnabled = {true}
