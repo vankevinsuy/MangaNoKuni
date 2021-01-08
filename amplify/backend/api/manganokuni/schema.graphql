@@ -34,6 +34,7 @@ type User @model
   clienID: String!
   imgProfil: String!
   pseudo: String!
+  list_favoris:[Int!] #liste de mal_id
 }
 
 type Reading @model 
