@@ -90,6 +90,7 @@ export const getUser = /* GraphQL */ `
       clienID
       imgProfil
       pseudo
+      list_favoris
       createdAt
       updatedAt
     }
@@ -107,6 +108,7 @@ export const listUsers = /* GraphQL */ `
         clienID
         imgProfil
         pseudo
+        list_favoris
         createdAt
         updatedAt
       }
@@ -233,6 +235,7 @@ export const userByClienId = /* GraphQL */ `
         clienID
         imgProfil
         pseudo
+        list_favoris
         createdAt
         updatedAt
       }

@@ -131,6 +131,7 @@ export const createUser = /* GraphQL */ `
       clienID
       imgProfil
       pseudo
+      list_favoris
       createdAt
       updatedAt
     }
@@ -146,6 +147,7 @@ export const updateUser = /* GraphQL */ `
       clienID
       imgProfil
       pseudo
+      list_favoris
       createdAt
       updatedAt
     }
@@ -161,6 +163,7 @@ export const deleteUser = /* GraphQL */ `
       clienID
       imgProfil
       pseudo
+      list_favoris
       createdAt
       updatedAt
     }
