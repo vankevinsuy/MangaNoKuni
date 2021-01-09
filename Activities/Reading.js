@@ -5,7 +5,7 @@ import { WebView } from 'react-native-webview';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import Amplify, { Auth, input } from 'aws-amplify';
+import Amplify, { Auth } from 'aws-amplify';
 import config from '../aws-exports';
 Amplify.configure(config);
 

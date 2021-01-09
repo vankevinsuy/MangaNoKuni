@@ -15,9 +15,9 @@ Amplify.configure(config);
 
 // graphQL
 import {API, graphqlOperation} from 'aws-amplify';
-import {getManga, chapitreByMalId, readingByClienId} from '../graphql/queries';
+import {getManga, chapitreByMalId, readingByClienId, userByClienId} from '../graphql/queries';
 import {createReading} from '../graphql/mutations';
-import { updateReading } from '../graphql/mutations';
+import { updateReading, updateUser } from '../graphql/mutations';
 
 
 
@@ -29,15 +29,17 @@ export default function MangaInfo({route, navigation}) {
     const [nextToken , setNextToken] = useState(null)
     const [chapterLoading, setChapterLoading] = useState({flex : 1, alignItems : 'center' , justifyContent : 'center' , marginVertical : 10});
     const [currentChapter, setCurrentChapter] = useState(1)   
-
+    const [client_favoris, setClient_favoris] = useState([]);
+    const [is_in_lib, set_is_in_lib] = useState(false);
+    const [is_in_lib_text, set_is_in_lib_text] = useState("Add to my library");
 
     const [loadingData, setLoadingData] = useState(true)
 
-    useEffect(() => {
+     useEffect(() => {
         setLoadingData(true)
-
-        init_fetchManga().then(() => {setLoadingData(false)})
-        
+        init_fetchManga().then(() => {
+            setLoadingData(false)
+        })
       }, [])
 
     //get 20 first chapters
@@ -59,6 +61,19 @@ export default function MangaInfo({route, navigation}) {
                 const client =  user.pool.clientId ;
                 // console.log(client)
                 // console.log(manga.data.getManga.mal_id)
+
+                const userById = await API.graphql(graphqlOperation(userByClienId, {clienID: client} ));
+                const list_fav = userById.data.UserByClienID.items[0].list_favoris;
+                if(list_fav == null){
+                    setClient_favoris([])
+                  }
+                else{
+                    setClient_favoris(list_fav)
+                    if(list_fav.includes(manga.data.getManga.mal_id)){
+                        set_is_in_lib(true)
+                        set_is_in_lib_text("In my library")
+                    }
+                  }
 
                 const current_chap = await API.graphql(graphqlOperation(readingByClienId, { clienID: client, filter : {mal_id: {eq: manga.data.getManga.mal_id}} } ))
                 if(current_chap.data.ReadingByClienID.items.length === 0){
@@ -123,6 +138,51 @@ export default function MangaInfo({route, navigation}) {
         })
     }
 
+    //update chapter reading in db
+    async function updateUserFavorite() {
+
+        await Auth.currentAuthenticatedUser()
+        .then(async (user) => {   
+            const clientID =  user.pool.clientId ;
+            try{
+                const userByID = await API.graphql(graphqlOperation(userByClienId, {clienID: clientID} )); 
+                const userByIDData = userByID.data.UserByClienID.items[0]
+                
+                //add or remove from user list favorites
+                //remove
+                if(is_in_lib){
+                    console.log("remove")
+
+                    var i;
+                    for (i = 0; i < client_favoris.length; i++) {
+                        if(client_favoris[i] === mangaData.mal_id){
+                            client_favoris.splice(i, 1)
+                        }
+                    }
+                    console.log(client_favoris)
+                    await API.graphql(graphqlOperation(updateUser, {input: {id: userByIDData.id, list_favoris: client_favoris} } ))
+
+                    //change the button's color
+                    set_is_in_lib(!is_in_lib)
+                    set_is_in_lib_text("Add to my library")
+
+                }
+                //add
+                else{
+                    console.log("add")
+                    client_favoris.push(mangaData.mal_id)
+
+                    console.log(client_favoris)
+                    await API.graphql(graphqlOperation(updateUser, {input: {id: userByIDData.id, list_favoris: client_favoris} } ))
+
+                    //change the button's color
+                    set_is_in_lib(!is_in_lib)
+                    set_is_in_lib_text("In my library")
+                }
+            }
+            catch (err) { console.error(err) }
+        })
+    }
 
     const themeContext = React.useContext(ThemeContext);
     const themeDATA = useTheme();
@@ -179,9 +239,16 @@ export default function MangaInfo({route, navigation}) {
         fontSize : 20
     },
 
-    });
-    
+    button_add_to_lib : {
+        backgroundColor: (is_in_lib ? "green" : "tomato"),
+        alignSelf: 'flex-start' , 
+        position : 'absolute', 
+        top :1, 
+        right:1, 
+        padding : 5
+    },
 
+    });
 
     return (
         <SafeAreaView style = {{flex : 1}}>
@@ -209,8 +276,10 @@ export default function MangaInfo({route, navigation}) {
                     }}
                 />
 
-                <TouchableOpacity style={{backgroundColor: 'tomato', alignSelf: 'flex-start' , position : 'absolute', top :1, right:1, padding : 5}}>
-                    <Text style={{fontSize:15}}>Add to my library</Text>
+                <TouchableOpacity style={styles.button_add_to_lib} onPress={()=> {
+                    updateUserFavorite()
+                }}>
+                    <Text style={{fontSize:15}}>{is_in_lib_text}</Text>
                 </TouchableOpacity>
 
 
