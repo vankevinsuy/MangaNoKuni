@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet,  StatusBar , Button} from 'react-native';
+import { StyleSheet, StatusBar, Button, FlatList, RefreshControl } from 'react-native';
 import { Layout as View, Text, useTheme } from '@ui-kitten/components';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,109 +16,130 @@ Amplify.configure(config);
 
 // import components
 import Header from '../components/Header';
+import CardManga from '../components/CardManga';
 
 // graphQL
-import {API, graphqlOperation} from 'aws-amplify';
-import {userByClienId, listMangas} from '../graphql/queries';
+import { API, graphqlOperation } from 'aws-amplify';
+import { userByClienId, listMangas } from '../graphql/queries';
 
-export default function Mylibrary({props, navigation}) {
+export default function Mylibrary({ navigation }) {
 
   const themeContext = React.useContext(ThemeContext);
   const themeDATA = useTheme();
 
-  const [clientID, setclientData] = useState("");
+  const [clientID, setclientID] = useState();
   const [client_favoris, setClient_favoris] = useState();
-  const [Mangas, setMangas] = useState(["e"])
+  const [Mangas, setMangas] = useState([])
+  const [refreshing, setRefreshing] = React.useState(false);
 
 
   useEffect(() => {
     Auth.currentAuthenticatedUser().
-    then(user => {   
-      setclientData(user.pool.clientId);
-      init_fetchUserData(user.pool.clientId);
-    })
+      then((user) => {
+        //console.log(user.pool.clientId)
+        setclientID(user.pool.clientId)
+        init_fetchUserData(user.pool.clientId);
+      })
 
+    console.log("useEffect")
   }, [])
 
   //get user data
   async function init_fetchUserData(ID) {
+    try {
+      const user = await API.graphql(graphqlOperation(userByClienId, { clienID: ID }));
+      const list_fav = user.data.UserByClienID.items[0].list_favoris
 
-        try{
-            const user = await API.graphql(graphqlOperation(userByClienId, {clienID: ID} ));
-            const list_fav = user.data.UserByClienID.items[0].list_favoris
+      if (list_fav == null) {
+        setClient_favoris([])
+      }
+      else {
+        setClient_favoris(user.data.UserByClienID.items[0].list_favoris)
+        var i;
+        var temp_list = []
+        for (i = 0; i < list_fav.length; i++) {
+          fetchMangas(list_fav[i]).then((val) => { 
+            temp_list.push(val); 
+            
+            temp_list.sort(            
+              function(a, b) {
+              var nameA = a.title_search;
+              var nameB = b.title_search;
+              if (nameA < nameB) {
+                return -1; //nameA comes first
+              }
+              if (nameA > nameB) {
+                return 1; // nameB comes first
+              }
+              return 0;  // names must be equal
+            })
 
-            if(list_fav == null){
-              setClient_favoris([])
-            }
-            else{
-              setClient_favoris(user.data.UserByClienID.items[0].list_favoris)
-              var i;
-              for (i = 0; i < list_fav.length; i++) {
-                fetchMangas(list_fav[i])
-              } 
-            }
+            setMangas(temp_list) })
         }
-        catch (err) { console.error(err) }
-  }
+      }
 
-  async function fetchUserFav() {
-
-    try{
-        const user = await API.graphql(graphqlOperation(userByClienId, {clienID: clientID} ));
-        const list_fav = user.data.UserByClienID.items[0].list_favoris
-
-        if(list_fav == null){
-          setClient_favoris([])
-        }
-        else{
-          setClient_favoris(user.data.UserByClienID.items[0].list_favoris)
-          var i;
-          for (i = 0; i < list_fav.length; i++) {
-            fetchMangas(list_fav[i])
-          } 
-        }
+      return 1;
     }
     catch (err) { console.error(err) }
-
   }
 
   async function fetchMangas(malId) {
 
-    try{
-        const mangas = await API.graphql(graphqlOperation(listMangas, { filter: {mal_id: {eq: malId}} } ));
-        //console.log(mangas.data.listMangas.items[0])
-        const temp = Mangas
-        console.log(temp)
-        //temp.push(mangas.data.listMangas.items[0])
-        //setMangas(temp)
+    try {
+      const mangas = await API.graphql(graphqlOperation(listMangas, { filter: { mal_id: { eq: malId } } }));
+      //console.log(mangas.data.listMangas.items[0])
+      return mangas.data.listMangas.items[0]
     }
     catch (err) { console.error(err) }
 
   }
 
+
   function toogleDrawer() {
-    props.navigation.openDrawer()
+    navigation.openDrawer()
   }
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: themeDATA["background-basic-color-1"]
-    }, 
+    },
+
+    data: {
+      flex: 1,
+    },
+
   });
+
+  const renderItem = ({ item }) => (
+    <CardManga mangaData={item} navigation={navigation} />
+  );
+
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+
+    init_fetchUserData(clientID).then(() => setRefreshing(false));
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar 
-        backgroundColor = {(themeContext.theme === "dark") ? themeDATA['background-basic-color-1'] : app_common_style.splash_screen_color}
-        barStyle = {(themeContext.theme === "dark") ?  'light-content' :  'dark-content'}
+      <StatusBar
+        backgroundColor={(themeContext.theme === "dark") ? themeDATA['background-basic-color-1'] : app_common_style.splash_screen_color}
+        barStyle={(themeContext.theme === "dark") ? 'light-content' : 'dark-content'}
       />
 
-      <Header toogle = {toogleDrawer}/>
-      <Text>Library</Text>
-      <Button title = "refresh" onPress={()=> {
-        fetchUserFav()
-      }}/>
+      <Header toogle={toogleDrawer} />
+
+      <FlatList
+        style={styles.data}
+        data={Mangas}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      />
 
     </SafeAreaView>
   );

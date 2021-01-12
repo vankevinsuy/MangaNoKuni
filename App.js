@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { init_user_app_config, isFirstUse, changeTheme } from './CustomFunctions/CommonVariable';
 
 import { ActivityIndicator} from 'react-native';
-import Amplify, { Auth } from 'aws-amplify';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -30,6 +29,7 @@ import CustomSidebarMenu from './components/CustomSidebarMenu';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
+import Amplify, { Auth } from 'aws-amplify';
 import config from './aws-exports';
 Amplify.configure(config);
 
@@ -37,24 +37,7 @@ const AuthenticationStack = createStackNavigator();
 const HomeStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-async function beforeLaunch () {
-  try {
-    //  it is the first we use the app, so we initialise some global variable stored in CommonVariable.js
-    isFirstUse().then((val) => { 
-      if(val !== "1"){
-        console.log("initialisation variables")
-        init_user_app_config();
-      }
-      else{
-        console.log("welcome back");
-      }
-    });
-  } 
-  
-  catch (e) {
-    console.warn(e);
-  }
-}
+
 
 const AuthenticationNavigator = props => {
   return (
@@ -93,7 +76,7 @@ const AppNavigator = props => {
 
       <Drawer.Screen name="Home" component={HomeNavigation} />
       <Drawer.Screen name="Profile" component={User} />
-      <Drawer.Screen name="My library" component={Mylibrary} />
+      <Drawer.Screen name="My library" component={MylibraryLNavigation} />
       <Drawer.Screen name="Settings" >
       {screenProps => (
           <Settings {...screenProps} updateAuthState={props.updateAuthState} />
@@ -121,15 +104,25 @@ function HomeNavigation() {
   );
 }
 
+function MylibraryLNavigation() {
+  return (
+    <HomeStack.Navigator screenOptions={{headerShown: false}}>
+      <HomeStack.Screen name="My library" component={Mylibrary} />
+      <HomeStack.Screen name="MangaInfo" component={MangaInfo} />
+      <HomeStack.Screen name="Reading" component={Reading} />
+    </HomeStack.Navigator>
+  );
+}
+
 
 
 const App  = () => {  
-  // beforeLaunch();
-
 
   const [isUserLoggedIn, setUserLoggedIn] = useState('initializing');
   const [theme, setTheme] = React.useState('light');
 
+
+  // define theme
   AsyncStorage.getItem('theme').then((val) => {setTheme(val)});
 
   const toggleTheme = () => {

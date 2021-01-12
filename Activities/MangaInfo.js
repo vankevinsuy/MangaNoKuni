@@ -1,5 +1,5 @@
 import React ,{useState, useEffect} from 'react';
-import { StyleSheet, Image, ScrollView, StatusBar, TouchableOpacity, Button} from 'react-native';
+import { StyleSheet, Image, ScrollView, StatusBar, TouchableOpacity} from 'react-native';
 import { Layout as View, Text, useTheme , Spinner } from '@ui-kitten/components';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
