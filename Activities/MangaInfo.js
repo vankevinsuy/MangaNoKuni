@@ -4,7 +4,6 @@ import { Layout as View, Text, useTheme , Spinner } from '@ui-kitten/components'
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-
 // themes import 
 import * as app_common_style from '../assets/themes/common_style';
 import { ThemeContext } from '../assets/themes/theme-context';
