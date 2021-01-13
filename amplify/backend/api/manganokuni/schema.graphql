@@ -3,8 +3,8 @@ type Manga @model
 {
   id: ID!
   mal_id: Int!
-  url: String!
-  from: String!
+  # url: String!
+  # from: String!
   title: String!
   title_japanese: String!
   synopsys: String!
