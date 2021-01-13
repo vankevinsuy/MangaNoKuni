@@ -9,8 +9,6 @@ export const createManga = /* GraphQL */ `
     createManga(input: $input, condition: $condition) {
       id
       mal_id
-      url
-      from
       title
       title_japanese
       synopsys
@@ -32,8 +30,6 @@ export const updateManga = /* GraphQL */ `
     updateManga(input: $input, condition: $condition) {
       id
       mal_id
-      url
-      from
       title
       title_japanese
       synopsys
@@ -55,8 +51,6 @@ export const deleteManga = /* GraphQL */ `
     deleteManga(input: $input, condition: $condition) {
       id
       mal_id
-      url
-      from
       title
       title_japanese
       synopsys

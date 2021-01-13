@@ -6,8 +6,6 @@ export const onCreateManga = /* GraphQL */ `
     onCreateManga {
       id
       mal_id
-      url
-      from
       title
       title_japanese
       synopsys
@@ -26,8 +24,6 @@ export const onUpdateManga = /* GraphQL */ `
     onUpdateManga {
       id
       mal_id
-      url
-      from
       title
       title_japanese
       synopsys
@@ -46,8 +42,6 @@ export const onDeleteManga = /* GraphQL */ `
     onDeleteManga {
       id
       mal_id
-      url
-      from
       title
       title_japanese
       synopsys

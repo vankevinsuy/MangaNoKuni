@@ -6,8 +6,6 @@ export const getManga = /* GraphQL */ `
     getManga(id: $id) {
       id
       mal_id
-      url
-      from
       title
       title_japanese
       synopsys
@@ -31,8 +29,6 @@ export const listMangas = /* GraphQL */ `
       items {
         id
         mal_id
-        url
-        from
         title
         title_japanese
         synopsys
@@ -167,8 +163,6 @@ export const mangaByMalId = /* GraphQL */ `
       items {
         id
         mal_id
-        url
-        from
         title
         title_japanese
         synopsys
