@@ -9,6 +9,9 @@ Amplify.configure(config);
 
 import {avatars_url} from '../assets/Avatars'
 
+import * as Crypto from 'expo-crypto';
+
+
 // graphQL
 import {API, graphqlOperation} from 'aws-amplify';
 import {userByClienId} from '../graphql/queries'
@@ -22,10 +25,18 @@ const CustomSidebarMenu = (props) => {
 
   const [modalVisible, setModalVisible] = useState(false);
 
+  async function hash(username){
+    return await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA256,
+      username)
+  }
+
   useEffect(() => {
     Auth.currentAuthenticatedUser().
-    then(user => {   
-      fetchUser(user.pool.clientId)
+    then(user => {  
+      hash(user.username).then((hashed)=>{
+        fetchUser(hashed)
+      })
     })
   }, [])
 

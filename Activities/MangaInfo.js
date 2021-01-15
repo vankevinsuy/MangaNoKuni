@@ -18,6 +18,8 @@ import {getManga, chapitreByMalId, readingByClienId, userByClienId} from '../gra
 import {createReading} from '../graphql/mutations';
 import { updateReading, updateUser } from '../graphql/mutations';
 
+import * as Crypto from 'expo-crypto';
+
 
 
 export default function MangaInfo({route, navigation}) {
@@ -33,6 +35,12 @@ export default function MangaInfo({route, navigation}) {
     const [is_in_lib_text, set_is_in_lib_text] = useState("Add to my library");
 
     const [loadingData, setLoadingData] = useState(true)
+
+    async function hash(username){
+        return await Crypto.digestStringAsync(
+          Crypto.CryptoDigestAlgorithm.SHA256,
+          username)
+    }
 
      useEffect(() => {
         setLoadingData(true)
@@ -57,42 +65,41 @@ export default function MangaInfo({route, navigation}) {
 
             await Auth.currentAuthenticatedUser()
             .then(async (user) => {   
-                const client =  user.pool.clientId ;
-                // console.log(client)
-                // console.log(manga.data.getManga.mal_id)
-
-                const userById = await API.graphql(graphqlOperation(userByClienId, {clienID: client} ));
-                const list_fav = userById.data.UserByClienID.items[0].list_favoris;
-                if(list_fav == null){
-                    setClient_favoris([])
-                  }
-                else{
-                    setClient_favoris(list_fav)
-                    if(list_fav.includes(manga.data.getManga.mal_id)){
-                        set_is_in_lib(true)
-                        set_is_in_lib_text("In my library")
+                hash(user.username).then(async(client)=>{
+                    const userById = await API.graphql(graphqlOperation(userByClienId, {clienID: client} ));
+                    const list_fav = userById.data.UserByClienID.items[0].list_favoris;
+                    if(list_fav == null){
+                        setClient_favoris([])
+                      }
+                    else{
+                        setClient_favoris(list_fav)
+                        if(list_fav.includes(manga.data.getManga.mal_id)){
+                            set_is_in_lib(true)
+                            set_is_in_lib_text("In my library")
+                        }
+                      }
+    
+                    const current_chap = await API.graphql(graphqlOperation(readingByClienId, { clienID: client, filter : {mal_id: {eq: manga.data.getManga.mal_id}} } ))
+                    if(current_chap.data.ReadingByClienID.items.length === 0){
+                        // console.log("pas de chapitre on va le créer")
+                        try{
+                            API.graphql(graphqlOperation(createReading, {input: 
+                                {
+                                clienID : client,
+                                mal_id :  manga.data.getManga.mal_id,
+                                currentChapter : 1
+                                } 
+                            }))
+                        }
+                        catch (err) { console.error(err) }
                     }
-                  }
-
-                const current_chap = await API.graphql(graphqlOperation(readingByClienId, { clienID: client, filter : {mal_id: {eq: manga.data.getManga.mal_id}} } ))
-                if(current_chap.data.ReadingByClienID.items.length === 0){
-                    // console.log("pas de chapitre on va le créer")
-                    try{
-                        API.graphql(graphqlOperation(createReading, {input: 
-                            {
-                            clienID : client,
-                            mal_id :  manga.data.getManga.mal_id,
-                            currentChapter : 1
-                            } 
-                        }))
+                    else{
+                        // console.log("donnée existante")
+                        // console.log(current_chap.data.ReadingByClienID.items[0].currentChapter)
+                        setCurrentChapter(current_chap.data.ReadingByClienID.items[0].currentChapter)
                     }
-                    catch (err) { console.error(err) }
-                }
-                else{
-                    // console.log("donnée existante")
-                    // console.log(current_chap.data.ReadingByClienID.items[0].currentChapter)
-                    setCurrentChapter(current_chap.data.ReadingByClienID.items[0].currentChapter)
-                }
+                })
+
             })
 
 
@@ -125,15 +132,16 @@ export default function MangaInfo({route, navigation}) {
 
         await Auth.currentAuthenticatedUser()
         .then(async (user) => {   
-            const clientID =  user.pool.clientId ;
-            try{
-                const reading = await API.graphql(graphqlOperation(readingByClienId, {clienID: clientID, filter: {mal_id: {eq: mangaData.mal_id}}} )); 
-                const readingData =  reading.data.ReadingByClienID.items[0]
-    
-                await API.graphql(graphqlOperation(updateReading, {input: {clienID: clientID, currentChapter: chapitre.num_chapitre, mal_id: mangaData.mal_id, id: readingData.id}} ))
-                navigation.navigate("Reading", params = {chapitreData: chapitre, type : 1} )
-            }
-            catch (err) { console.error(err) }
+            hash(user.username).then(async (clientID) => {
+                try{
+                    const reading = await API.graphql(graphqlOperation(readingByClienId, {clienID: clientID, filter: {mal_id: {eq: mangaData.mal_id}}} )); 
+                    const readingData =  reading.data.ReadingByClienID.items[0]
+        
+                    await API.graphql(graphqlOperation(updateReading, {input: {clienID: clientID, currentChapter: chapitre.num_chapitre, mal_id: mangaData.mal_id, id: readingData.id}} ))
+                    navigation.navigate("Reading", params = {chapitreData: chapitre, type : 1} )
+                }
+                catch (err) { console.error(err) }
+            })
         })
     }
 
@@ -142,44 +150,46 @@ export default function MangaInfo({route, navigation}) {
 
         await Auth.currentAuthenticatedUser()
         .then(async (user) => {   
-            const clientID =  user.pool.clientId ;
-            try{
-                const userByID = await API.graphql(graphqlOperation(userByClienId, {clienID: clientID} )); 
-                const userByIDData = userByID.data.UserByClienID.items[0]
-                
-                //add or remove from user list favorites
-                //remove
-                if(is_in_lib){
-                    console.log("remove")
-
-                    var i;
-                    for (i = 0; i < client_favoris.length; i++) {
-                        if(client_favoris[i] === mangaData.mal_id){
-                            client_favoris.splice(i, 1)
+            hash(user.username).then(async(clientID)=>{
+                try{
+                    const userByID = await API.graphql(graphqlOperation(userByClienId, {clienID: clientID} )); 
+                    const userByIDData = userByID.data.UserByClienID.items[0]
+                    
+                    //add or remove from user list favorites
+                    //remove
+                    if(is_in_lib){
+                        console.log("remove")
+    
+                        var i;
+                        for (i = 0; i < client_favoris.length; i++) {
+                            if(client_favoris[i] === mangaData.mal_id){
+                                client_favoris.splice(i, 1)
+                            }
                         }
+                        console.log(client_favoris)
+                        await API.graphql(graphqlOperation(updateUser, {input: {id: userByIDData.id, list_favoris: client_favoris} } ))
+    
+                        //change the button's color
+                        set_is_in_lib(!is_in_lib)
+                        set_is_in_lib_text("Add to my library")
+    
                     }
-                    console.log(client_favoris)
-                    await API.graphql(graphqlOperation(updateUser, {input: {id: userByIDData.id, list_favoris: client_favoris} } ))
-
-                    //change the button's color
-                    set_is_in_lib(!is_in_lib)
-                    set_is_in_lib_text("Add to my library")
-
+                    //add
+                    else{
+                        console.log("add")
+                        client_favoris.push(mangaData.mal_id)
+    
+                        console.log(client_favoris)
+                        await API.graphql(graphqlOperation(updateUser, {input: {id: userByIDData.id, list_favoris: client_favoris} } ))
+    
+                        //change the button's color
+                        set_is_in_lib(!is_in_lib)
+                        set_is_in_lib_text("In my library")
+                    }
                 }
-                //add
-                else{
-                    console.log("add")
-                    client_favoris.push(mangaData.mal_id)
+                catch (err) { console.error(err) }
+            })
 
-                    console.log(client_favoris)
-                    await API.graphql(graphqlOperation(updateUser, {input: {id: userByIDData.id, list_favoris: client_favoris} } ))
-
-                    //change the button's color
-                    set_is_in_lib(!is_in_lib)
-                    set_is_in_lib_text("In my library")
-                }
-            }
-            catch (err) { console.error(err) }
         })
     }
 

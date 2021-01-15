@@ -16,6 +16,7 @@ import { ThemeContext } from '../assets/themes/theme-context';
 // import components
 import Header from '../components/Header';
 
+
 export default function Settings(props) {
   async function signOut() {
     try {

@@ -14,6 +14,9 @@ import {createUser} from '../graphql/mutations';
 
 import {avatars_url} from '../assets/Avatars'
 
+import * as Crypto from 'expo-crypto';
+
+
 
 
 export default function ConfirmSignUp({ navigation, updateAuthState, route}) {
@@ -23,6 +26,13 @@ export default function ConfirmSignUp({ navigation, updateAuthState, route}) {
   const {password} = route.params;
 
   const themeDATA = useTheme();
+
+  async function hashPesudo(username){
+     return await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA256,
+      username
+    )
+  }
 
   async function confirmSignUp() {
     try {
@@ -37,13 +47,18 @@ export default function ConfirmSignUp({ navigation, updateAuthState, route}) {
         Auth.currentAuthenticatedUser()
         .then(user => {
           try {
-            API.graphql(graphqlOperation(createUser, {input: 
-              {
-                clienID : user.pool.clientId,
-                imgProfil : avatars_url[Math.floor(Math.random() * avatars_url.length)],
-                pseudo : username
-              } 
-            }))
+
+            hashPesudo(username).
+            then((hashed)=> {   
+              API.graphql(graphqlOperation(createUser, {input: 
+                {
+                  clienID : hashed,
+                  imgProfil : avatars_url[Math.floor(Math.random() * avatars_url.length)],
+                  pseudo : username
+                } 
+              }))
+            })
+
           } catch (err) {
             console.log('error creating user:', err)
           }
@@ -60,18 +75,6 @@ export default function ConfirmSignUp({ navigation, updateAuthState, route}) {
         '--------------------------------------------- Verification code does not match. Please enter a valid verification code.',
         error.code
       );
-    }
-  }
-
-  async function addUser() {
-    try {
-      const todo = { ...formState }
-      setTodos([...todos, todo])
-      setFormState(initialState)
-      await API.graphql(graphqlOperation(createTodo, {input: todo}))
-    } 
-    catch (err) {
-      console.log('error creating user:', err)
     }
   }
 

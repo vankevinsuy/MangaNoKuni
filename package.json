@@ -38,7 +38,8 @@
     "react-native-vector-icons": "^7.1.0",
     "react-native-web": "~0.13.12",
     "react-native-webview": "10.7.0",
-    "rn-json-store": "0.0.2"
+    "rn-json-store": "0.0.2",
+    "expo-crypto": "~8.3.0"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0"

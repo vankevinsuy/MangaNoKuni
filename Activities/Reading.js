@@ -18,6 +18,7 @@ import {API, graphqlOperation} from 'aws-amplify';
 import {chapitreByMalId, readingByClienId} from '../graphql/queries';
 import { updateReading } from '../graphql/mutations';
 
+import * as Crypto from 'expo-crypto';
 
 
 
@@ -58,11 +59,19 @@ export default function Reading({route, navigation}) {
 
     const [clientID, setclientData] = useState();
 
+    async function hash(username){
+        return await Crypto.digestStringAsync(
+          Crypto.CryptoDigestAlgorithm.SHA256,
+          username)
+      }
+
     useEffect(() => {
 
         Auth.currentAuthenticatedUser().
         then(user => {   
-            setclientData(user.pool.clientId)
+            hash(user.username).then((hashed)=>{
+                setclientData(hashed)
+            })
         })
 
         if(route.params.type == 0){

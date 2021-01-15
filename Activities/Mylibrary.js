@@ -22,6 +22,9 @@ import CardManga from '../components/CardManga';
 import { API, graphqlOperation } from 'aws-amplify';
 import { userByClienId, listMangas } from '../graphql/queries';
 
+import * as Crypto from 'expo-crypto';
+
+
 export default function Mylibrary({ navigation }) {
 
   const themeContext = React.useContext(ThemeContext);
@@ -32,13 +35,19 @@ export default function Mylibrary({ navigation }) {
   const [Mangas, setMangas] = useState([])
   const [refreshing, setRefreshing] = React.useState(false);
 
+  async function hash(username){
+    return await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA256,
+      username)
+}
 
   useEffect(() => {
     Auth.currentAuthenticatedUser().
       then((user) => {
-        //console.log(user.pool.clientId)
-        setclientID(user.pool.clientId)
-        init_fetchUserData(user.pool.clientId);
+        hash(user.username).then((hashed)=>{
+          setclientID(hashed)
+          init_fetchUserData(hashed);
+        })
       })
 
     console.log("useEffect")
@@ -119,7 +128,13 @@ export default function Mylibrary({ navigation }) {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
 
-    init_fetchUserData(clientID).then(() => setRefreshing(false));
+    Auth.currentAuthenticatedUser().
+    then((user) => {
+      hash(user.username).then((hashed)=>{
+        init_fetchUserData(hashed).then(() => setRefreshing(false));
+      })
+    })
+
   }, []);
 
   return (
