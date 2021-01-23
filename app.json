@@ -23,7 +23,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.vankevinsuy.Manga_no_kuni"
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -1,5 +1,5 @@
 {
-  "AppSyncApiName": "manganokuni",
-  "DynamoDBBillingMode": "PAY_PER_REQUEST",
-  "DynamoDBEnableServerSideEncryption": false
+    "AppSyncApiName": "manganokuni",
+    "DynamoDBBillingMode": "PAY_PER_REQUEST",
+    "DynamoDBEnableServerSideEncryption": false
 }

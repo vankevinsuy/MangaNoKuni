@@ -75,7 +75,6 @@ export const createChapitre = /* GraphQL */ `
       title
       num_chapitre
       url
-      images_html
       createdAt
       updatedAt
     }
@@ -92,7 +91,6 @@ export const updateChapitre = /* GraphQL */ `
       title
       num_chapitre
       url
-      images_html
       createdAt
       updatedAt
     }
@@ -109,7 +107,6 @@ export const deleteChapitre = /* GraphQL */ `
       title
       num_chapitre
       url
-      images_html
       createdAt
       updatedAt
     }
@@ -203,6 +200,117 @@ export const deleteReading = /* GraphQL */ `
       mal_id
       clienID
       currentChapter
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createAnime = /* GraphQL */ `
+  mutation CreateAnime(
+    $input: CreateAnimeInput!
+    $condition: ModelAnimeConditionInput
+  ) {
+    createAnime(input: $input, condition: $condition) {
+      id
+      mal_id
+      title
+      title_japanese
+      synopsys
+      image_url
+      score
+      genre
+      authors
+      title_search
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateAnime = /* GraphQL */ `
+  mutation UpdateAnime(
+    $input: UpdateAnimeInput!
+    $condition: ModelAnimeConditionInput
+  ) {
+    updateAnime(input: $input, condition: $condition) {
+      id
+      mal_id
+      title
+      title_japanese
+      synopsys
+      image_url
+      score
+      genre
+      authors
+      title_search
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteAnime = /* GraphQL */ `
+  mutation DeleteAnime(
+    $input: DeleteAnimeInput!
+    $condition: ModelAnimeConditionInput
+  ) {
+    deleteAnime(input: $input, condition: $condition) {
+      id
+      mal_id
+      title
+      title_japanese
+      synopsys
+      image_url
+      score
+      genre
+      authors
+      title_search
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createEpisode = /* GraphQL */ `
+  mutation CreateEpisode(
+    $input: CreateEpisodeInput!
+    $condition: ModelEpisodeConditionInput
+  ) {
+    createEpisode(input: $input, condition: $condition) {
+      id
+      mal_id
+      title
+      num_episode
+      url
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateEpisode = /* GraphQL */ `
+  mutation UpdateEpisode(
+    $input: UpdateEpisodeInput!
+    $condition: ModelEpisodeConditionInput
+  ) {
+    updateEpisode(input: $input, condition: $condition) {
+      id
+      mal_id
+      title
+      num_episode
+      url
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteEpisode = /* GraphQL */ `
+  mutation DeleteEpisode(
+    $input: DeleteEpisodeInput!
+    $condition: ModelEpisodeConditionInput
+  ) {
+    deleteEpisode(input: $input, condition: $condition) {
+      id
+      mal_id
+      title
+      num_episode
+      url
       createdAt
       updatedAt
     }

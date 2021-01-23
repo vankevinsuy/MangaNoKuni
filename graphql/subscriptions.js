@@ -63,7 +63,6 @@ export const onCreateChapitre = /* GraphQL */ `
       title
       num_chapitre
       url
-      images_html
       createdAt
       updatedAt
     }
@@ -77,7 +76,6 @@ export const onUpdateChapitre = /* GraphQL */ `
       title
       num_chapitre
       url
-      images_html
       createdAt
       updatedAt
     }
@@ -91,7 +89,6 @@ export const onDeleteChapitre = /* GraphQL */ `
       title
       num_chapitre
       url
-      images_html
       createdAt
       updatedAt
     }
@@ -167,6 +164,99 @@ export const onDeleteReading = /* GraphQL */ `
       mal_id
       clienID
       currentChapter
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateAnime = /* GraphQL */ `
+  subscription OnCreateAnime {
+    onCreateAnime {
+      id
+      mal_id
+      title
+      title_japanese
+      synopsys
+      image_url
+      score
+      genre
+      authors
+      title_search
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateAnime = /* GraphQL */ `
+  subscription OnUpdateAnime {
+    onUpdateAnime {
+      id
+      mal_id
+      title
+      title_japanese
+      synopsys
+      image_url
+      score
+      genre
+      authors
+      title_search
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteAnime = /* GraphQL */ `
+  subscription OnDeleteAnime {
+    onDeleteAnime {
+      id
+      mal_id
+      title
+      title_japanese
+      synopsys
+      image_url
+      score
+      genre
+      authors
+      title_search
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateEpisode = /* GraphQL */ `
+  subscription OnCreateEpisode {
+    onCreateEpisode {
+      id
+      mal_id
+      title
+      num_episode
+      url
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateEpisode = /* GraphQL */ `
+  subscription OnUpdateEpisode {
+    onUpdateEpisode {
+      id
+      mal_id
+      title
+      num_episode
+      url
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteEpisode = /* GraphQL */ `
+  subscription OnDeleteEpisode {
+    onDeleteEpisode {
+      id
+      mal_id
+      title
+      num_episode
+      url
       createdAt
       updatedAt
     }
