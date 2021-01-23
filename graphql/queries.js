@@ -84,7 +84,8 @@ export const getUser = /* GraphQL */ `
       clienID
       imgProfil
       pseudo
-      list_favoris
+      list_favoris_manga
+      list_favoris_anime
       createdAt
       updatedAt
     }
@@ -102,7 +103,8 @@ export const listUsers = /* GraphQL */ `
         clienID
         imgProfil
         pseudo
-        list_favoris
+        list_favoris_manga
+        list_favoris_anime
         createdAt
         updatedAt
       }
@@ -333,7 +335,8 @@ export const userByClienId = /* GraphQL */ `
         clienID
         imgProfil
         pseudo
-        list_favoris
+        list_favoris_manga
+        list_favoris_anime
         createdAt
         updatedAt
       }

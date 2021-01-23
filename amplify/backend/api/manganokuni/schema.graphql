@@ -33,7 +33,8 @@ type User @model
   clienID: String!
   imgProfil: String!
   pseudo: String!
-  list_favoris:[Int!] #liste de mal_id
+  list_favoris_manga:[Int!] #liste de mal_id
+  list_favoris_anime:[Int!] #liste de mal_id
 }
 
 type Reading @model 

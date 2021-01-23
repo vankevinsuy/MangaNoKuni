@@ -122,7 +122,8 @@ export const createUser = /* GraphQL */ `
       clienID
       imgProfil
       pseudo
-      list_favoris
+      list_favoris_manga
+      list_favoris_anime
       createdAt
       updatedAt
     }
@@ -138,7 +139,8 @@ export const updateUser = /* GraphQL */ `
       clienID
       imgProfil
       pseudo
-      list_favoris
+      list_favoris_manga
+      list_favoris_anime
       createdAt
       updatedAt
     }
@@ -154,7 +156,8 @@ export const deleteUser = /* GraphQL */ `
       clienID
       imgProfil
       pseudo
-      list_favoris
+      list_favoris_manga
+      list_favoris_anime
       createdAt
       updatedAt
     }
