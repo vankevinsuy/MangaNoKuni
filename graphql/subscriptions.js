@@ -262,3 +262,39 @@ export const onDeleteEpisode = /* GraphQL */ `
     }
   }
 `;
+export const onCreateWatching = /* GraphQL */ `
+  subscription OnCreateWatching {
+    onCreateWatching {
+      id
+      mal_id
+      clienID
+      currentEpisode
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateWatching = /* GraphQL */ `
+  subscription OnUpdateWatching {
+    onUpdateWatching {
+      id
+      mal_id
+      clienID
+      currentEpisode
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteWatching = /* GraphQL */ `
+  subscription OnDeleteWatching {
+    onDeleteWatching {
+      id
+      mal_id
+      clienID
+      currentEpisode
+      createdAt
+      updatedAt
+    }
+  }
+`;

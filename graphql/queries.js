@@ -217,6 +217,37 @@ export const listEpisodes = /* GraphQL */ `
     }
   }
 `;
+export const getWatching = /* GraphQL */ `
+  query GetWatching($id: ID!) {
+    getWatching(id: $id) {
+      id
+      mal_id
+      clienID
+      currentEpisode
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listWatchings = /* GraphQL */ `
+  query ListWatchings(
+    $filter: ModelWatchingFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listWatchings(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        mal_id
+        clienID
+        currentEpisode
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
 export const mangaByMalId = /* GraphQL */ `
   query MangaByMalId(
     $mal_id: Int
@@ -395,6 +426,33 @@ export const episodeByMalId = /* GraphQL */ `
         title
         num_episode
         url
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const watchingByClienId = /* GraphQL */ `
+  query WatchingByClienId(
+    $clienID: String
+    $sortDirection: ModelSortDirection
+    $filter: ModelWatchingFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    WatchingByClienID(
+      clienID: $clienID
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        mal_id
+        clienID
+        currentEpisode
         createdAt
         updatedAt
       }

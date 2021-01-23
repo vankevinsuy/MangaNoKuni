@@ -316,3 +316,48 @@ export const deleteEpisode = /* GraphQL */ `
     }
   }
 `;
+export const createWatching = /* GraphQL */ `
+  mutation CreateWatching(
+    $input: CreateWatchingInput!
+    $condition: ModelWatchingConditionInput
+  ) {
+    createWatching(input: $input, condition: $condition) {
+      id
+      mal_id
+      clienID
+      currentEpisode
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateWatching = /* GraphQL */ `
+  mutation UpdateWatching(
+    $input: UpdateWatchingInput!
+    $condition: ModelWatchingConditionInput
+  ) {
+    updateWatching(input: $input, condition: $condition) {
+      id
+      mal_id
+      clienID
+      currentEpisode
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteWatching = /* GraphQL */ `
+  mutation DeleteWatching(
+    $input: DeleteWatchingInput!
+    $condition: ModelWatchingConditionInput
+  ) {
+    deleteWatching(input: $input, condition: $condition) {
+      id
+      mal_id
+      clienID
+      currentEpisode
+      createdAt
+      updatedAt
+    }
+  }
+`;

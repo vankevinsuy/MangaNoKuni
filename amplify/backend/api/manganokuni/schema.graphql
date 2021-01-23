@@ -69,3 +69,12 @@ type Episode @model
   num_episode: Float!
   url: String!
 }
+
+type Watching @model 
+@key(name: "WatchingByClienID", fields: ["clienID"], queryField: "WatchingByClienID")
+{
+  id: ID!
+  mal_id: String!
+  clienID: String!
+  currentEpisode: Float!
+}
