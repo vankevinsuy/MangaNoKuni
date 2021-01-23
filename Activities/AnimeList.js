@@ -15,7 +15,7 @@ import Header from '../components/Header';
 
 
 
-export default function User(props) {
+export default function Amime(props) {
 
   const themeContext = React.useContext(ThemeContext);
   const themeDATA = useTheme();
@@ -45,7 +45,7 @@ export default function User(props) {
 
       <Header toogle = {toogleDrawer}/>
 
-      <Text>User</Text>
+      <Text>Anime</Text>
 
     </SafeAreaView>
   );

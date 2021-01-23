@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { init_user_app_config, isFirstUse, changeTheme } from './CustomFunctions/CommonVariable';
+import { changeTheme } from './CustomFunctions/CommonVariable';
 
 import { ActivityIndicator} from 'react-native';
 
@@ -11,10 +11,10 @@ import SignIn from './Activities/SingIn';
 import SignUp from './Activities/SignUp';
 import ConfirmSignUp from './Activities/ConfirmSignUp';
 
-import Home from './Activities/Home';
+import Manga from './Activities/MangaList';
 import Mylibrary from './Activities/Mylibrary';
 import Settings from './Activities/Settings';
-import User from './Activities/User';
+import Amime from './Activities/AnimeList';
 import MangaInfo from './Activities/MangaInfo'
 import Reading from './Activities/Reading'
 
@@ -34,7 +34,7 @@ import config from './aws-exports';
 Amplify.configure(config);
 
 const AuthenticationStack = createStackNavigator();
-const HomeStack = createStackNavigator();
+const MangaStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 
@@ -64,7 +64,7 @@ const AuthenticationNavigator = props => {
 const AppNavigator = props => {
    return (
     <Drawer.Navigator 
-    initialRouteName="Home"
+    initialRouteName="Manga"
     drawerContentOptions={{
       activeTintColor: app_common_style.splash_screen_color,
       itemStyle: {
@@ -73,9 +73,8 @@ const AppNavigator = props => {
     }}
     drawerContent={(props) => <CustomSidebarMenu {...props} />}>
 
-
-      <Drawer.Screen name="Home" component={HomeNavigation} />
-      <Drawer.Screen name="Profile" component={User} />
+      <Drawer.Screen name="Mangas" component={MangaNavigation} />
+      <Drawer.Screen name="Animes" component={Amime} />
       <Drawer.Screen name="My library" component={MylibraryLNavigation} />
       <Drawer.Screen name="Settings" >
       {screenProps => (
@@ -94,23 +93,23 @@ const Initializing = () => {
   );
 };
 
-function HomeNavigation() {
+function MangaNavigation() {
   return (
-    <HomeStack.Navigator screenOptions={{headerShown: false}}>
-      <HomeStack.Screen name="Home" component={Home} />
-      <HomeStack.Screen name="MangaInfo" component={MangaInfo} />
-      <HomeStack.Screen name="Reading" component={Reading} />
-    </HomeStack.Navigator>
+    <MangaStack.Navigator screenOptions={{headerShown: false}}>
+      <MangaStack.Screen name="Manga" component={Manga} />
+      <MangaStack.Screen name="MangaInfo" component={MangaInfo} />
+      <MangaStack.Screen name="Reading" component={Reading} />
+    </MangaStack.Navigator>
   );
 }
 
 function MylibraryLNavigation() {
   return (
-    <HomeStack.Navigator screenOptions={{headerShown: false}}>
-      <HomeStack.Screen name="My library" component={Mylibrary} />
-      <HomeStack.Screen name="MangaInfo" component={MangaInfo} />
-      <HomeStack.Screen name="Reading" component={Reading} />
-    </HomeStack.Navigator>
+    <MangaStack.Navigator screenOptions={{headerShown: false}}>
+      <MangaStack.Screen name="My library" component={Mylibrary} />
+      <MangaStack.Screen name="MangaInfo" component={MangaInfo} />
+      <MangaStack.Screen name="Reading" component={Reading} />
+    </MangaStack.Navigator>
   );
 }
 

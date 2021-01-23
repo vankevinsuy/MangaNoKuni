@@ -23,7 +23,7 @@ import CardManga from '../components/CardManga';
 
 
 
-export default function Home({ navigation }) {
+export default function Manga({ navigation }) {
 
   const themeContext = React.useContext(ThemeContext);
   const themeDATA = useTheme();

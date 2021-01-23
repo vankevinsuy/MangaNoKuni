@@ -23,7 +23,6 @@ type Chapitre @model
   title: String!
   num_chapitre: Float!
   url: String!
-  images_html: String!
 }
 
 
@@ -44,4 +43,29 @@ type Reading @model
   mal_id: String!
   clienID: String!
   currentChapter: Float!
+}
+
+type Anime @model 
+@key(name: "AnimeByMalID", fields: ["mal_id", "title"], queryField: "AnimeByMalID")
+{
+  id: ID!
+  mal_id: Int!
+  title: String!
+  title_japanese: String!
+  synopsys: String!
+  image_url: String!
+  score:String!
+  genre:[String!]
+  authors:String!
+  title_search: String!
+}
+
+type Episode @model 
+@key(name: "EpisodeByMalID", fields: ["mal_id", "num_episode"], queryField: "EpisodeByMalID")
+{
+  id: ID!
+  mal_id: Int!
+  title: String!
+  num_episode: Float!
+  url: String!
 }

@@ -4,9 +4,10 @@ import { Layout as View, Text, useTheme } from '@ui-kitten/components';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { NavigationContainer } from '@react-navigation/native';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
 // themes import 
-import * as light_theme from '../assets/themes/light';
-import * as dark_theme from '../assets/themes/dark';
 import * as app_common_style from '../assets/themes/common_style';
 import { ThemeContext } from '../assets/themes/theme-context';
 
@@ -24,6 +25,28 @@ import { userByClienId, listMangas } from '../graphql/queries';
 
 import * as Crypto from 'expo-crypto';
 
+function DataScreen({Data, renderItem, refreshing, onRefresh, style}) {
+  return (
+      <FlatList
+        style={style}
+        data={Data}
+        renderItem={renderItem}
+        keyExtractor={item => item.id}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      />
+  );
+}
+
+
+const Tab = createMaterialTopTabNavigator();
+
+
+
+
+
+
 
 export default function Mylibrary({ navigation }) {
 
@@ -35,16 +58,16 @@ export default function Mylibrary({ navigation }) {
   const [Mangas, setMangas] = useState([])
   const [refreshing, setRefreshing] = React.useState(false);
 
-  async function hash(username){
+  async function hash(username) {
     return await Crypto.digestStringAsync(
       Crypto.CryptoDigestAlgorithm.SHA256,
       username)
-}
+  }
 
   useEffect(() => {
     Auth.currentAuthenticatedUser().
       then((user) => {
-        hash(user.username).then((hashed)=>{
+        hash(user.username).then((hashed) => {
           setclientID(hashed)
           init_fetchUserData(hashed);
         })
@@ -67,23 +90,24 @@ export default function Mylibrary({ navigation }) {
         var i;
         var temp_list = []
         for (i = 0; i < list_fav.length; i++) {
-          fetchMangas(list_fav[i]).then((val) => { 
-            temp_list.push(val); 
-            
-            temp_list.sort(            
-              function(a, b) {
-              var nameA = a.title_search;
-              var nameB = b.title_search;
-              if (nameA < nameB) {
-                return -1; //nameA comes first
-              }
-              if (nameA > nameB) {
-                return 1; // nameB comes first
-              }
-              return 0;  // names must be equal
-            })
+          fetchMangas(list_fav[i]).then((val) => {
+            temp_list.push(val);
 
-            setMangas(temp_list) })
+            temp_list.sort(
+              function (a, b) {
+                var nameA = a.title_search;
+                var nameB = b.title_search;
+                if (nameA < nameB) {
+                  return -1; //nameA comes first
+                }
+                if (nameA > nameB) {
+                  return 1; // nameB comes first
+                }
+                return 0;  // names must be equal
+              })
+
+            setMangas(temp_list)
+          })
         }
       }
 
@@ -116,6 +140,7 @@ export default function Mylibrary({ navigation }) {
 
     data: {
       flex: 1,
+      backgroundColor: themeDATA["background-basic-color-1"]
     },
 
   });
@@ -129,11 +154,11 @@ export default function Mylibrary({ navigation }) {
     setRefreshing(true);
 
     Auth.currentAuthenticatedUser().
-    then((user) => {
-      hash(user.username).then((hashed)=>{
-        init_fetchUserData(hashed).then(() => setRefreshing(false));
+      then((user) => {
+        hash(user.username).then((hashed) => {
+          init_fetchUserData(hashed).then(() => setRefreshing(false));
+        })
       })
-    })
 
   }, []);
 
@@ -146,15 +171,23 @@ export default function Mylibrary({ navigation }) {
 
       <Header toogle={toogleDrawer} />
 
-      <FlatList
-        style={styles.data}
-        data={Mangas}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      />
+      <Tab.Navigator >
+
+        <Tab.Screen name="Manga">
+          {screenProps => (
+            <DataScreen {...screenProps} Data = {Mangas} renderItem = {renderItem} refreshing = {refreshing} onRefresh = {onRefresh} style = {styles.data}/>
+          )}
+        </Tab.Screen>
+
+
+        <Tab.Screen name="Anime">
+          {screenProps => (
+            <DataScreen {...screenProps} Data = {Mangas} renderItem = {renderItem} refreshing = {refreshing} onRefresh = {onRefresh} style = {styles.data}/>
+          )}
+        </Tab.Screen>
+
+
+      </Tab.Navigator>
 
     </SafeAreaView>
   );
