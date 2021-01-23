@@ -14,9 +14,11 @@ import ConfirmSignUp from './Activities/ConfirmSignUp';
 import Manga from './Activities/MangaList';
 import Mylibrary from './Activities/Mylibrary';
 import Settings from './Activities/Settings';
-import Amime from './Activities/AnimeList';
+import Anime from './Activities/AnimeList';
 import MangaInfo from './Activities/MangaInfo'
+import AnimeInfo from './Activities/AnimeInfo'
 import Reading from './Activities/Reading'
+import Watching from './Activities/Watching'
 
 import * as app_common_style from './assets/themes/common_style';
 import * as eva from '@eva-design/eva';
@@ -74,7 +76,7 @@ const AppNavigator = props => {
     drawerContent={(props) => <CustomSidebarMenu {...props} />}>
 
       <Drawer.Screen name="Mangas" component={MangaNavigation} />
-      <Drawer.Screen name="Animes" component={Amime} />
+      <Drawer.Screen name="Animes" component={AnimeNavigation} />
       <Drawer.Screen name="My library" component={MylibraryLNavigation} />
       <Drawer.Screen name="Settings" >
       {screenProps => (
@@ -103,12 +105,24 @@ function MangaNavigation() {
   );
 }
 
+function AnimeNavigation() {
+  return (
+    <MangaStack.Navigator screenOptions={{headerShown: false}}>
+      <MangaStack.Screen name="Anime" component={Anime} />
+      <MangaStack.Screen name="AnimeInfo" component={AnimeInfo} />
+      <MangaStack.Screen name="Watching" component={Watching} />
+    </MangaStack.Navigator>
+  );
+}
+
 function MylibraryLNavigation() {
   return (
     <MangaStack.Navigator screenOptions={{headerShown: false}}>
       <MangaStack.Screen name="My library" component={Mylibrary} />
       <MangaStack.Screen name="MangaInfo" component={MangaInfo} />
       <MangaStack.Screen name="Reading" component={Reading} />
+      <MangaStack.Screen name="AnimeInfo" component={AnimeInfo} />
+      <MangaStack.Screen name="Watching" component={Watching} />
     </MangaStack.Navigator>
   );
 }

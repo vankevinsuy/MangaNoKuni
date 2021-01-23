@@ -4,7 +4,6 @@ import { Layout as View, Text, useTheme } from '@ui-kitten/components';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 // themes import 
@@ -21,9 +20,10 @@ import CardManga from '../components/CardManga';
 
 // graphQL
 import { API, graphqlOperation } from 'aws-amplify';
-import { userByClienId, listMangas } from '../graphql/queries';
+import { userByClienId, listMangas, listAnimes } from '../graphql/queries';
 
 import * as Crypto from 'expo-crypto';
+import CardAnime from '../components/CardAnime';
 
 function DataScreen({Data, renderItem, refreshing, onRefresh, style}) {
   return (
@@ -43,19 +43,16 @@ function DataScreen({Data, renderItem, refreshing, onRefresh, style}) {
 const Tab = createMaterialTopTabNavigator();
 
 
-
-
-
-
-
 export default function Mylibrary({ navigation }) {
 
   const themeContext = React.useContext(ThemeContext);
   const themeDATA = useTheme();
 
   const [clientID, setclientID] = useState();
-  const [client_favoris, setClient_favoris] = useState();
+  const [client_favoris_manga, setClient_favoris_manga] = useState();
+  const [client_favoris_anime, setClient_favoris_anime] = useState();
   const [Mangas, setMangas] = useState([])
+  const [Animes, setAnimes] = useState([])
   const [refreshing, setRefreshing] = React.useState(false);
 
   async function hash(username) {
@@ -73,27 +70,27 @@ export default function Mylibrary({ navigation }) {
         })
       })
 
-    console.log("useEffect")
   }, [])
 
   //get user data
   async function init_fetchUserData(ID) {
     try {
       const user = await API.graphql(graphqlOperation(userByClienId, { clienID: ID }));
-      const list_fav = user.data.UserByClienID.items[0].list_favoris
+      const list_fav_manga = user.data.UserByClienID.items[0].list_favoris_manga
+      const list_fav_anime = user.data.UserByClienID.items[0].list_favoris_anime
 
-      if (list_fav == null) {
-        setClient_favoris([])
+      if (list_fav_manga == null) {
+        setClient_favoris_manga([])
       }
       else {
-        setClient_favoris(user.data.UserByClienID.items[0].list_favoris)
+        setClient_favoris_manga(user.data.UserByClienID.items[0].list_favoris_manga)
         var i;
-        var temp_list = []
-        for (i = 0; i < list_fav.length; i++) {
-          fetchMangas(list_fav[i]).then((val) => {
-            temp_list.push(val);
+        var temp_list_manga = []
+        for (i = 0; i < list_fav_manga.length; i++) {
+          fetchMangas(list_fav_manga[i]).then((val) => {
+            temp_list_manga.push(val);
 
-            temp_list.sort(
+            temp_list_manga.sort(
               function (a, b) {
                 var nameA = a.title_search;
                 var nameB = b.title_search;
@@ -106,7 +103,36 @@ export default function Mylibrary({ navigation }) {
                 return 0;  // names must be equal
               })
 
-            setMangas(temp_list)
+            setMangas(temp_list_manga)
+          })
+        }
+      }
+
+      if (list_fav_anime == null) {
+        setClient_favoris_anime([])
+      }
+      else {
+        setClient_favoris_anime(user.data.UserByClienID.items[0].list_favoris_anime)
+        var i;
+        var temp_list_anime = []
+        for (i = 0; i < list_fav_anime.length; i++) {
+          fetchAnimes(list_fav_anime[i]).then((val) => {
+            temp_list_anime.push(val);
+
+            temp_list_anime.sort(
+              function (a, b) {
+                var nameA = a.title_search;
+                var nameB = b.title_search;
+                if (nameA < nameB) {
+                  return -1; //nameA comes first
+                }
+                if (nameA > nameB) {
+                  return 1; // nameB comes first
+                }
+                return 0;  // names must be equal
+              })
+
+            setAnimes(temp_list_anime)
           })
         }
       }
@@ -120,8 +146,17 @@ export default function Mylibrary({ navigation }) {
 
     try {
       const mangas = await API.graphql(graphqlOperation(listMangas, { filter: { mal_id: { eq: malId } } }));
-      //console.log(mangas.data.listMangas.items[0])
       return mangas.data.listMangas.items[0]
+    }
+    catch (err) { console.error(err) }
+
+  }
+
+  async function fetchAnimes(malId) {
+
+    try {
+      const animes = await API.graphql(graphqlOperation(listAnimes, { filter: { mal_id: { eq: malId } } }));
+      return animes.data.listAnimes.items[0]
     }
     catch (err) { console.error(err) }
 
@@ -145,9 +180,14 @@ export default function Mylibrary({ navigation }) {
 
   });
 
-  const renderItem = ({ item }) => (
+  const renderItemManga = ({ item }) => (
     <CardManga mangaData={item} navigation={navigation} />
   );
+
+  const renderItemAnime = ({ item }) => (
+    <CardAnime animeData={item} navigation={navigation} />
+  );
+
 
 
   const onRefresh = React.useCallback(() => {
@@ -175,14 +215,14 @@ export default function Mylibrary({ navigation }) {
 
         <Tab.Screen name="Manga">
           {screenProps => (
-            <DataScreen {...screenProps} Data = {Mangas} renderItem = {renderItem} refreshing = {refreshing} onRefresh = {onRefresh} style = {styles.data}/>
+            <DataScreen {...screenProps} Data = {Mangas} renderItem = {renderItemManga} refreshing = {refreshing} onRefresh = {onRefresh} style = {styles.data}/>
           )}
         </Tab.Screen>
 
 
         <Tab.Screen name="Anime">
           {screenProps => (
-            <DataScreen {...screenProps} Data = {Mangas} renderItem = {renderItem} refreshing = {refreshing} onRefresh = {onRefresh} style = {styles.data}/>
+            <DataScreen {...screenProps} Data = {Animes} renderItem = {renderItemAnime} refreshing = {refreshing} onRefresh = {onRefresh} style = {styles.data}/>
           )}
         </Tab.Screen>
 
