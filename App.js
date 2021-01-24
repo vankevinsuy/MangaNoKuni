@@ -30,6 +30,9 @@ import CustomSidebarMenu from './components/CustomSidebarMenu';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import * as ScreenOrientation from 'expo-screen-orientation';
+
+
 
 import Amplify, { Auth } from 'aws-amplify';
 import config from './aws-exports';
@@ -133,7 +136,7 @@ const App  = () => {
 
   const [isUserLoggedIn, setUserLoggedIn] = useState('initializing');
   const [theme, setTheme] = React.useState('light');
-
+  ScreenOrientation.unlockAsync()
 
   // define theme
   AsyncStorage.getItem('theme').then((val) => {setTheme(val)});
