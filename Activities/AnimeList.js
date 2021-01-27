@@ -84,7 +84,7 @@ export default function Anime({ navigation }) {
         barStyle = {(themeContext.theme === "dark") ?  'light-content' :  'dark-content'}
       />
       
-      <HeaderSearch toogle = {toogleDrawer} setStateAnimes = {setStateAnimes}/>
+      <HeaderSearch toogle = {toogleDrawer} setStateData = {setStateAnimes} type={"anime"}/>
 
       { 
         Dataloading ?

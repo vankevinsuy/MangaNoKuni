@@ -11,7 +11,7 @@ import * as app_common_style from '../assets/themes/common_style';
 import { ThemeContext } from '../assets/themes/theme-context';
 
 
-const Header = (props) => {
+const Header = ({tabname, toogle}, props) => {
 
     const themeContext = React.useContext(ThemeContext);
     const themeDATA = useTheme();
@@ -28,18 +28,28 @@ const Header = (props) => {
             width : 50,
             resizeMode : 'contain'
         },
+
+        tabname : {
+            flex : 1,
+            textAlign: 'center',
+            fontWeight: 'bold',
+            fontSize: 20
+        }
+
     });
 
 
 
     return (
     <View style = {styles.container}>
-        <TouchableOpacity onPress = {props.toogle}>
+        <TouchableOpacity onPress = {toogle}>
             <Image
                 source= {require('../assets/drawerButton/drawerDark.png')}
                 style={styles.drawerButton}
             />
         </TouchableOpacity>
+
+        <Text style = {styles.tabname}>{tabname}</Text>
 
     </View>
     );

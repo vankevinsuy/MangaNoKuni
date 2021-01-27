@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, StatusBar, Button, FlatList, RefreshControl } from 'react-native';
+import { StyleSheet, StatusBar, FlatList, RefreshControl } from 'react-native';
 import { Layout as View, Text, useTheme } from '@ui-kitten/components';
 
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -28,14 +28,14 @@ import CardAnime from '../components/CardAnime';
 function DataScreen({Data, renderItem, refreshing, onRefresh, style}) {
   return (
       <FlatList
-        style={style}
-        data={Data}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      />
+      style={style}
+      data={Data}
+      renderItem={renderItem}
+      keyExtractor={item => item.id}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    />
   );
 }
 
@@ -54,6 +54,7 @@ export default function Mylibrary({ navigation }) {
   const [Mangas, setMangas] = useState([])
   const [Animes, setAnimes] = useState([])
   const [refreshing, setRefreshing] = React.useState(false);
+  const [currentTab, setcurrentTab] = useState("")
 
   async function hash(username) {
     return await Crypto.digestStringAsync(
@@ -209,9 +210,9 @@ export default function Mylibrary({ navigation }) {
         barStyle={(themeContext.theme === "dark") ? 'light-content' : 'dark-content'}
       />
 
-      <Header toogle={toogleDrawer} />
+      <Header toogle={toogleDrawer} tabname = {"My library"}/>
 
-      <Tab.Navigator >
+      <Tab.Navigator>
 
         <Tab.Screen name="Manga">
           {screenProps => (

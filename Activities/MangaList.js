@@ -84,7 +84,7 @@ export default function Manga({ navigation }) {
         barStyle = {(themeContext.theme === "dark") ?  'light-content' :  'dark-content'}
       />
       
-      <HeaderSearch toogle = {toogleDrawer} setStateMangas = {setStateMangas}/>
+      <HeaderSearch toogle = {toogleDrawer} setStateData = {setStateMangas}  type={"manga"}/>
 
       { 
         Dataloading ?
