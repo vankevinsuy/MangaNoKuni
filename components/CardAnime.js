@@ -1,16 +1,15 @@
 import React from 'react';
 import { StyleSheet, Image,  Dimensions , Button} from 'react-native';
-import { Layout as View, Text, useTheme , Spinner } from '@ui-kitten/components';
+import { Layout as View, Text, useTheme  } from '@ui-kitten/components';
 
 
 
 // themes import 
-import * as app_common_style from '../assets/themes/common_style';
 import { ThemeContext } from '../assets/themes/theme-context';
 
 
 
-export default function CardManga({ navigation , mangaData}) {
+export default function CardAnime({ navigation , animeData}) {
 
   const themeContext = React.useContext(ThemeContext);
   const themeDATA = useTheme();
@@ -57,20 +56,20 @@ export default function CardManga({ navigation , mangaData}) {
   });
 
   const click = () =>{
-      navigation.navigate("MangaInfo", params = {mangaID: mangaData.id} )
+      navigation.navigate("AnimeInfo", params = {animeID: animeData.id} )
   }
 
 
   return (
     <View style={styles.container}>
         <View style={styles.img_container}>
-            <Image style={styles.image} source={{uri: mangaData.image_url}}/>
+            <Image style={styles.image} source={{uri: animeData.image_url}}/>
         </View>
 
         <View style={styles.info_container}>
-            <Text style = {styles.title_japanese} adjustsFontSizeToFit = {true} numberOfLines = {1}> {mangaData.title_japanese}</Text>
-            <Text style = {styles.title} adjustsFontSizeToFit = {true} numberOfLines = {1}>{mangaData.title}</Text>
-            <Text style = {styles.score}>Score : {mangaData.score} / 10</Text>
+            <Text style = {styles.title_japanese} adjustsFontSizeToFit = {true} numberOfLines = {1}> {animeData.title_japanese}</Text>
+            <Text style = {styles.title} adjustsFontSizeToFit = {true} numberOfLines = {1}>{animeData.title}</Text>
+            <Text style = {styles.score}>Score : {animeData.score} / 10</Text>
 
             <Button
                 onPress={click}

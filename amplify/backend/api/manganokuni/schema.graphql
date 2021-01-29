@@ -1,22 +1,81 @@
-type Manga @model {
+type Manga @model 
+@key(name: "MangaByMalID", fields: ["mal_id", "title"], queryField: "MangaByMalID")
+{
   id: ID!
   mal_id: Int!
-  url: String!
-  from: String!
+  # url: String!
+  # from: String!
   title: String!
   title_japanese: String!
   synopsys: String!
   image_url: String!
   score:String!
   genre:[String!]
-  authors:[String!]
+  authors:String!
+  title_search: String!
 }
 
-type Chapitre @model {
+type Chapitre @model 
+@key(name: "ChapitreByMalID", fields: ["mal_id", "num_chapitre"], queryField: "ChapitreByMalID")
+{
   id: ID!
   mal_id: Int!
   title: String!
-  num_chapitre: Int!
+  num_chapitre: Float!
   url: String!
-  images_html: String!
+}
+
+
+type User @model 
+@key(name: "UserByClienID", fields: ["clienID"], queryField: "UserByClienID")
+{
+  id: ID!
+  clienID: String!
+  imgProfil: String!
+  pseudo: String!
+  list_favoris_manga:[Int!] #liste de mal_id
+  list_favoris_anime:[Int!] #liste de mal_id
+}
+
+type Reading @model 
+@key(name: "ReadingByClienID", fields: ["clienID"], queryField: "ReadingByClienID")
+{
+  id: ID!
+  mal_id: String!
+  clienID: String!
+  currentChapter: Float!
+}
+
+type Anime @model 
+@key(name: "AnimeByMalID", fields: ["mal_id", "title"], queryField: "AnimeByMalID")
+{
+  id: ID!
+  mal_id: Int!
+  title: String!
+  title_japanese: String!
+  synopsys: String!
+  image_url: String!
+  score:String!
+  genre:[String!]
+  authors:String!
+  title_search: String!
+}
+
+type Episode @model 
+@key(name: "EpisodeByMalID", fields: ["mal_id", "num_episode"], queryField: "EpisodeByMalID")
+{
+  id: ID!
+  mal_id: Int!
+  title: String!
+  num_episode: Float!
+  url: String!
+}
+
+type Watching @model 
+@key(name: "WatchingByClienID", fields: ["clienID"], queryField: "WatchingByClienID")
+{
+  id: ID!
+  mal_id: String!
+  clienID: String!
+  currentEpisode: Float!
 }

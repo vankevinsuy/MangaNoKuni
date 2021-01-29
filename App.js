@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import * as SplashScreen from 'expo-splash-screen';
-import { init_user_app_config, isFirstUse,resetDatas } from './CustomFunctions/CommonVariable';
+import { changeTheme } from './CustomFunctions/CommonVariable';
 
 import { ActivityIndicator} from 'react-native';
-import Amplify, { Auth } from 'aws-amplify';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -13,10 +11,14 @@ import SignIn from './Activities/SingIn';
 import SignUp from './Activities/SignUp';
 import ConfirmSignUp from './Activities/ConfirmSignUp';
 
-import Home from './Activities/Home';
-import Favoris from './Activities/Favoris';
+import Manga from './Activities/MangaList';
+import Mylibrary from './Activities/Mylibrary';
 import Settings from './Activities/Settings';
-import User from './Activities/User';
+import Anime from './Activities/AnimeList';
+import MangaInfo from './Activities/MangaInfo'
+import AnimeInfo from './Activities/AnimeInfo'
+import Reading from './Activities/Reading'
+import Watching from './Activities/Watching'
 
 import * as app_common_style from './assets/themes/common_style';
 import * as eva from '@eva-design/eva';
@@ -26,39 +28,21 @@ import { default as Mytheme } from './assets/themes/theme.json'; // <-- Import a
 
 import CustomSidebarMenu from './components/CustomSidebarMenu';
 
-//import { androidOnBackPressed } from '../CustomFunctions/Android';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import * as ScreenOrientation from 'expo-screen-orientation';
+
+
+
+import Amplify, { Auth } from 'aws-amplify';
 import config from './aws-exports';
 Amplify.configure(config);
 
 const AuthenticationStack = createStackNavigator();
+const MangaStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-async function beforeLaunch () {
-  try {
-    // display splashscreen
-    await SplashScreen.preventAutoHideAsync();
 
-    //  it is the first we use the app, so we initialise some global variable stored in CommonVariable.js
-    isFirstUse().then((val) => { 
-      if(val !== "1"){
-        console.log("initialisation variables")
-        init_user_app_config();
-      }
-      else{
-        console.log("welcome back");
-      }
-    });
-
-    
-    // close splashscreen
-    await SplashScreen.hideAsync();
-  } 
-  
-  catch (e) {
-    console.warn(e);
-  }
-}
 
 const AuthenticationNavigator = props => {
   return (
@@ -72,7 +56,11 @@ const AuthenticationNavigator = props => {
 
       <AuthenticationStack.Screen name="SignUp" component={SignUp} />
 
-      <AuthenticationStack.Screen name="ConfirmSignUp" component={ConfirmSignUp}/>
+      <AuthenticationStack.Screen name="ConfirmSignUp" >
+        {screenProps => (
+          <ConfirmSignUp {...screenProps} updateAuthState={props.updateAuthState}/>
+        )}
+      </AuthenticationStack.Screen>
 
     </AuthenticationStack.Navigator>
   );
@@ -81,7 +69,7 @@ const AuthenticationNavigator = props => {
 const AppNavigator = props => {
    return (
     <Drawer.Navigator 
-    initialRouteName="Home"
+    initialRouteName="Manga"
     drawerContentOptions={{
       activeTintColor: app_common_style.splash_screen_color,
       itemStyle: {
@@ -90,10 +78,9 @@ const AppNavigator = props => {
     }}
     drawerContent={(props) => <CustomSidebarMenu {...props} />}>
 
-
-      <Drawer.Screen name="Home" component={Home} />
-      <Drawer.Screen name="Profile" component={User} />
-      <Drawer.Screen name="Favoris" component={Favoris} />
+      <Drawer.Screen name="Mangas" component={MangaNavigation} />
+      <Drawer.Screen name="Animes" component={AnimeNavigation} />
+      <Drawer.Screen name="My library" component={MylibraryLNavigation} />
       <Drawer.Screen name="Settings" >
       {screenProps => (
           <Settings {...screenProps} updateAuthState={props.updateAuthState} />
@@ -111,23 +98,53 @@ const Initializing = () => {
   );
 };
 
+function MangaNavigation() {
+  return (
+    <MangaStack.Navigator screenOptions={{headerShown: false}}>
+      <MangaStack.Screen name="Manga" component={Manga} />
+      <MangaStack.Screen name="MangaInfo" component={MangaInfo} />
+      <MangaStack.Screen name="Reading" component={Reading} />
+    </MangaStack.Navigator>
+  );
+}
+
+function AnimeNavigation() {
+  return (
+    <MangaStack.Navigator screenOptions={{headerShown: false}}>
+      <MangaStack.Screen name="Anime" component={Anime} />
+      <MangaStack.Screen name="AnimeInfo" component={AnimeInfo} />
+      <MangaStack.Screen name="Watching" component={Watching} />
+    </MangaStack.Navigator>
+  );
+}
+
+function MylibraryLNavigation() {
+  return (
+    <MangaStack.Navigator screenOptions={{headerShown: false}}>
+      <MangaStack.Screen name="My library" component={Mylibrary} />
+      <MangaStack.Screen name="MangaInfo" component={MangaInfo} />
+      <MangaStack.Screen name="Reading" component={Reading} />
+      <MangaStack.Screen name="AnimeInfo" component={AnimeInfo} />
+      <MangaStack.Screen name="Watching" component={Watching} />
+    </MangaStack.Navigator>
+  );
+}
 
 
-
-//resetDatas();
 
 const App  = () => {  
-  //beforeLaunch();
 
-  //androidOnBackPressed();
   const [isUserLoggedIn, setUserLoggedIn] = useState('initializing');
   const [theme, setTheme] = React.useState('light');
+  ScreenOrientation.unlockAsync()
 
+  // define theme
+  AsyncStorage.getItem('theme').then((val) => {setTheme(val)});
 
   const toggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(nextTheme);
-    console.log("theme = " + theme);
+    changeTheme(nextTheme)
   };
   
   useEffect(() => {

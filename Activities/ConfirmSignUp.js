@@ -8,18 +8,68 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AppTextInput from '../components/AppTextInput';
 import AppButton from '../components/AppButton';
 
+//graphql
+import {API, graphqlOperation} from 'aws-amplify';
+import {createUser} from '../graphql/mutations';
 
-export default function ConfirmSignUp({ navigation }) {
+import {avatars_url} from '../assets/Avatars'
+
+import * as Crypto from 'expo-crypto';
+
+
+
+
+export default function ConfirmSignUp({ navigation, updateAuthState, route}) {
   const [username, setUsername] = useState('');
   const [authCode, setAuthCode] = useState('');
 
+  const {password} = route.params;
+
   const themeDATA = useTheme();
+
+  async function hashPesudo(username){
+     return await Crypto.digestStringAsync(
+      Crypto.CryptoDigestAlgorithm.SHA256,
+      username
+    )
+  }
 
   async function confirmSignUp() {
     try {
       await Auth.confirmSignUp(username, authCode);
       console.log('---------------------------------------------Code confirmed');
-      navigation.navigate('SignIn');
+
+      try {
+        await Auth.signIn(username, password);
+        console.log('loggin Success');
+        updateAuthState('loggedIn');
+
+        Auth.currentAuthenticatedUser()
+        .then(user => {
+          try {
+
+            hashPesudo(username).
+            then((hashed)=> {   
+              API.graphql(graphqlOperation(createUser, {input: 
+                {
+                  clienID : hashed,
+                  imgProfil : avatars_url[Math.floor(Math.random() * avatars_url.length)],
+                  pseudo : username
+                } 
+              }))
+            })
+
+          } catch (err) {
+            console.log('error creating user:', err)
+          }
+        })
+
+        navigation.navigate('Home');
+      } catch (error) {
+        console.log('Error signing in...', error);
+      }
+
+      //navigation.navigate('SignIn');
     } catch (error) {
       console.log(
         '--------------------------------------------- Verification code does not match. Please enter a valid verification code.',

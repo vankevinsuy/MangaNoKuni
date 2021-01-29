@@ -12,7 +12,6 @@ import * as app_common_style from '../assets/themes/common_style';
 import { ThemeContext } from '../assets/themes/theme-context';
 
 
-
 export default function SignUp({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -24,15 +23,11 @@ export default function SignUp({ navigation }) {
     try {
       await Auth.signUp({ username, password, attributes: { email } });
       console.log('--------------------------------------------------Sign-up Confirmed');
-      navigation.navigate('ConfirmSignUp');
+      navigation.navigate('ConfirmSignUp', params = {password: password});
     } catch (error) {
       console.log('--------------------------------------------------Error signing up...', error);
     }
   }
-
-  console.log("-------------------SIGNUP------------------------");
-
-
 
   const styles = StyleSheet.create({
     safeAreaContainer: {

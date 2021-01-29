@@ -11,35 +11,45 @@ import * as app_common_style from '../assets/themes/common_style';
 import { ThemeContext } from '../assets/themes/theme-context';
 
 
-const Header = (props) => {
+const Header = ({tabname, toogle}, props) => {
 
     const themeContext = React.useContext(ThemeContext);
     const themeDATA = useTheme();
 
     const styles = StyleSheet.create({
         container: {
-          flex: 0.15,
+          flex: 0.1,
           alignItems: 'center', 
           backgroundColor : (themeContext.theme === "dark") ? themeDATA["background-basic-color-1"] : app_common_style.splash_screen_color,
           flexDirection: "row",
         }, 
         drawerButton : {
-            width: 40, 
-            height: 40,
-            marginLeft: 10
+            flex: 0.5,
+            width : 50,
+            resizeMode : 'contain'
         },
+
+        tabname : {
+            flex : 1,
+            textAlign: 'center',
+            fontWeight: 'bold',
+            fontSize: 20
+        }
+
     });
 
 
 
     return (
     <View style = {styles.container}>
-        <TouchableOpacity onPress = {props.toogle}>
+        <TouchableOpacity onPress = {toogle}>
             <Image
                 source= {require('../assets/drawerButton/drawerDark.png')}
                 style={styles.drawerButton}
             />
         </TouchableOpacity>
+
+        <Text style = {styles.tabname}>{tabname}</Text>
 
     </View>
     );

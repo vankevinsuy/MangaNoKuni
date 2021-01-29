@@ -16,6 +16,7 @@ import { ThemeContext } from '../assets/themes/theme-context';
 // import components
 import Header from '../components/Header';
 
+
 export default function Settings(props) {
   async function signOut() {
     try {
@@ -49,7 +50,7 @@ export default function Settings(props) {
         backgroundColor = {(themeContext.theme === "dark") ? themeDATA['background-basic-color-1'] : app_common_style.splash_screen_color}
         barStyle = {(themeContext.theme === "dark") ?  'light-content' :  'dark-content'}
       />
-      <Header toogle = {toogleDrawer}/>
+      <Header toogle = {toogleDrawer} tabname={"Settings"}/>
 
       <View>
         <Text>Settings</Text>
