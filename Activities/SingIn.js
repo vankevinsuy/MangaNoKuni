@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TouchableOpacity, StyleSheet, Image,  Switch, StatusBar } from 'react-native';
+import { TouchableOpacity, StyleSheet, Image,  Switch, StatusBar, Alert } from 'react-native';
 import { Layout as View, Text, useTheme } from '@ui-kitten/components';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -32,8 +32,16 @@ export default function SignIn({ navigation, updateAuthState}) {
       console.log('loggin Success');
       updateAuthState('loggedIn');
     } catch (error) {
-      console.log('Error signing in...', error);
+      console.log('Error signing in...', error.message);
+
+      Alert.alert(
+        "Error signing",
+        error.message,
+        [{ text: "OK"}],
+      );
+
     }
+
   }
 
 
